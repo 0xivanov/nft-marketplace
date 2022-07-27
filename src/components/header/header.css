@@ -1,0 +1,70 @@
+.header {
+    width: 100%;
+    height: 70px;
+    line-height: 70px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1111111;
+}
+
+.navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav__list {
+    display: flex;
+    align-items: center;
+    column-gap: 2.7rem;
+}
+
+.nav__item a {
+    text-decoration: none;
+    color: #FFF;
+    transition: 0.3s;
+    
+}
+
+.nav__item a:hover {
+    color: #e250e5;
+}
+
+.active {
+    background: -webkit-linear-gradient(-45deg, #e250E5, #4b50e6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.logo h2 {
+    background: linear-gradient(-45deg, #e250E5, #4b50e6, #e250E5, #4b50e6);
+    background-size: 100% 100%;
+    background-clip: text;
+    -webkit-text-stroke: 3px transparent;
+    -webkit-text-fill-color: #14141F;
+}
+
+.nav__right .btn {
+    padding: 7px 25px;
+    border: 1px solid #5243FC;
+    border-radius: 50px;
+}
+
+
+.nav__right .btn a {
+    color: #FFF;
+    text-decoration: none;
+    font-style: 0.8rem;
+    display: inline-block;
+}
+
+.nav__right .btn a:hover {
+    color: #FFF;
+}
+
+.mobile__menu {
+    color: #FFF;
+    font-style: 1.3rem;
+    display: none;
+}
