@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import "bootstrap/dist/css/bootstrap.css"
 import "remixicon/fonts/remixicon.css"
+import './App.css'
 import { BrowserRouter as Router } from 'react-router-dom';
 
 

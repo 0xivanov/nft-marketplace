@@ -1,15 +1,36 @@
 
-
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
 
+body::-webkit-scrollbar {
+  width: 10px;
+}
+
+body::-webkit-scrollbar-track {
+  background-color: #e4e4e4;
+  border-radius: 100px;
+}
+
+body::-webkit-scrollbar-thumb {
+  border-radius: 100px;
+  border: 6px solid rgba(0, 0, 0, 0.18);
+  border-left: 0;
+  border-right: 0;
+  background-color: #8070d4;
+}
+
+
 body {
   height: 100%;
   background: #14141F !important;
   font-family: "Roboto", sans-serif;
+}
+
+.root {
+  height: 100% !important;
 }
 
 h1, h2 {

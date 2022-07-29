@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Container } from 'reactstrap'
 import {NavLink, Link} from 'react-router-dom'
 import './header.css'
@@ -23,7 +23,23 @@ const NAV_LINKS = [
 ]
 
 const Header = () => {
-  return <header className="header">
+
+    const headerRef = useRef(null)
+    useEffect(() => {
+        window.addEventListener('scroll', () => {
+            if(document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+                headerRef.current.classList.add('header__shrink')
+            } else {
+                headerRef.current.classList.remove('header__shrink')
+            }
+
+            return () => {
+                window.removeEventListener('scroll')
+            }
+        })
+    }, [])
+
+  return <header className="header" ref={headerRef}>
     <Container>
     <div className="navigation">
         <div className="logo">
@@ -45,7 +61,7 @@ const Header = () => {
         </div>
         <div className="nav__right d-flex align-items-center gap-5">
             <button className="btn">
-                <Link className='d-flex gap-2 align-items-center' to={"/wallet"}><span><i className="ri-wallet-3-line"></i></span>Connect wallet
+                <Link className='d-flex gap-2 align-items-center' to={"/wallet"}><i className="ri-wallet-3-line"></i>Connect wallet
                 </Link>
             </button>
             <span className="mobile__menu"><i className="ri-menu-line"></i></span>
