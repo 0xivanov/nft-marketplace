@@ -57,7 +57,7 @@
 }
 
 
-.nav__right .btn a {
+.nav__right .btn div {
     color: #FFF;
     text-decoration: none;
     font-style: 0.8rem;
@@ -71,6 +71,11 @@
 .nav__right .btn i {
     font-size:1rem;
     color: #FFF;
+}
+
+.btn:disabled {
+    opacity: 100% !important;
+    border: 1px solid #5243FC !important;
 }
 
 .mobile__menu {

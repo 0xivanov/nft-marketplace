@@ -22,7 +22,7 @@ const NAV_LINKS = [
     },
 ]
 
-const Header = () => {
+const Header = ({connectAccount, account}) => {
 
     const headerRef = useRef(null)
     useEffect(() => {
@@ -60,12 +60,15 @@ const Header = () => {
             </ul>
         </div>
         <div className="nav__right d-flex align-items-center gap-5">
-            <button className="btn">
-                <Link className='d-flex gap-2 align-items-center' to={"/wallet"}><i className="ri-wallet-3-line"></i>Connect wallet
-                </Link>
+            <button onClick={() => connectAccount()} disabled={account} className="btn">
+                <div className='d-flex gap-2 align-items-center'><i className="ri-wallet-3-line"></i>
+                {
+                    account ? account : "Connect Account"
+                }
+                </div>
             </button>
-            <span className="mobile__menu"><i className="ri-menu-line"></i></span>
         </div>
+        <span className="mobile__menu"><i className="ri-menu-line"></i></span>
     </div>
     </Container>
   </header>
