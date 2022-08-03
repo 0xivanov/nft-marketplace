@@ -1,13 +1,15 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {Link} from 'react-router-dom'
+import Modal from './Modal'
 
 
 const NftCard = (props) => {
 
     const {title, id, currentBid, creatorImg, imgUrl, creator} = props.item
 
+    const [showModal, setShowModal] = useState(false)
+
   return (
-    <>
     <div className="single__nft__card">
     <div className="nft__img">
             <img src={imgUrl} alt="" className='w-100' />
@@ -30,14 +32,15 @@ const NftCard = (props) => {
             </div>
         </div>
         <div className="bid__btn d-flex align-items-center justify-content-between">
-            <button className="btn d-flex align-items-center gap-2">
+            <button className="btn d-flex align-items-center gap-2" onClick={() => {setShowModal(true)}}>
                 <i class="ri-shopping-bag-line"></i>
-                <Link to='#'>Place bid</Link>
+                Place Bid
             </button>
+
+            {showModal && <Modal setShowModal={setShowModal} />}
         </div>
     </div>
 </div>
-    </>
   )
 }
 

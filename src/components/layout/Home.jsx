@@ -1,7 +1,6 @@
 import React from 'react'
-import Hero from './ui/Hero'
-import LiveAuction from './ui/LiveAuction'
-import Seller from './ui/Seller'
+import Hero from '../ui/Hero'
+import LiveAuction from '../ui/LiveAuction'
 
 
 const Home = () => {
@@ -10,7 +9,6 @@ const Home = () => {
     <>
       <Hero />
       <LiveAuction />
-      <Seller />
     </>
   )
 }

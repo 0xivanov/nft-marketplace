@@ -1,0 +1,12 @@
+.common__section {
+    background: url('../../img/bg.jpg');
+    background-position: center center;
+    background-repeat:  no-repeat;
+    background-size: cover;
+    padding-top: 100px;
+}
+
+.common__section h2 {
+    color: #FFF;
+    
+}

@@ -2,13 +2,13 @@ import React from 'react'
 
 import {Routes, Route, Navigate} from "react-router-dom"
 
-import NftDetails from '../components/NftDetails'
-import Wallet from '../components/Wallet'
-import Profile from '../components/Profile'
-import Seller from '../components/Seller'
-import Create from '../components/Create'
-import Market from '../components/Market'
-import Home from '../components/Home'
+import NftDetails from '../components/layout/NftDetails'
+import Wallet from '../components/layout/Wallet'
+import Profile from '../components/layout/Profile'
+import Seller from '../components/layout/Seller'
+import Create from '../components/layout/Create'
+import Market from '../components/layout/Market'
+import Home from '../components/layout/Home'
 
 const Routers = () => {
   return (

@@ -24,6 +24,9 @@ const NAV_LINKS = [
 
 const Header = ({connectAccount, account}) => {
 
+    const menuRef = useRef(null);
+    const toggleMenu = () => menuRef.current.classList.toggle('active__menu')
+
     const headerRef = useRef(null)
     useEffect(() => {
         window.addEventListener('scroll', () => {
@@ -48,7 +51,7 @@ const Header = ({connectAccount, account}) => {
                 NFTs
             </h2>
         </div>
-        <div className="nav__menu">
+        <div className="nav__menu" ref={menuRef} onClick={toggleMenu}>
             <ul className="nav__list">
             {
                 NAV_LINKS.map((item, index) => (
@@ -68,7 +71,7 @@ const Header = ({connectAccount, account}) => {
                 </div>
             </button>
         </div>
-        <span className="mobile__menu"><i className="ri-menu-line"></i></span>
+        <span className="mobile__menu" onClick={toggleMenu}><i className="ri-menu-line"></i></span>
     </div>
     </Container>
   </header>

@@ -1,0 +1,15 @@
+
+
+.all__category__filter select {
+    padding: 8px 25px;
+    font-size: 0.9rem;
+    color: #FFF;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background: #343444;
+}
+
+.main__section {
+    padding: 0px !important;
+}

@@ -12,7 +12,6 @@
     padding: 20px;
     background: #343444;
     border-radius: 10px;
-
 }
 
 .nft__img img {
@@ -64,15 +63,11 @@
     padding: 7px 25px;
     border: 1px solid #5243FC;
     border-radius: 50px;
-    transition: 0.3s;
-}
-
-
-.bid__btn .btn a {
     color: #FFF;
     text-decoration: none;
     font-style: 0.8rem;
     display: inline-block;
+    transition: 0.3s;
 }
 
 .bid__btn button:hover {
@@ -83,4 +78,28 @@
 .bid__btn i {
     font-size:1rem;
     color: #FFF;
+}
+
+.row div {
+    margin-top: 10px;
+}
+
+@media only screen and (max-width: 992px) {
+    .nft__title{
+        font-size: 0.8rem !important;
+    }
+
+    .creator__info h6 {
+        font-size: 0.6rem !important;
+    }
+
+    .creator__info p {
+        font-size: 0.7rem !important;
+    }
+
+    .bid__btn .btn {
+        padding: 4px 20px !important;
+        font-size: 0.7rem !important;
+    }
+
 }
