@@ -1,4 +1,7 @@
 
+.categories {
+    margin-bottom: 15px;
+}
 
 .all__category__filter select {
     padding: 8px 25px;
@@ -11,5 +14,5 @@
 }
 
 .main__section {
-    padding: 0px !important;
+    padding: 6px !important;
 }

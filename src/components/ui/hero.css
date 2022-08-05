@@ -23,17 +23,22 @@
     border-radius: 50px;
 }
 
+.hero__content div div {
+    color: #FFF;
+}
 
 .hero__content .btn a {
     color: #FFF;
     text-decoration: none;
-    font-style: 0.8rem;
     display: inline-block;
 }
 
-.hero__content .btn a:hover {
+.hero__content a .btn {
     color: #FFF;
+    text-decoration: none;
+    display: inline-block;
 }
+
 
 .explore__btn i, .create__btn i {
     font-size:1rem;

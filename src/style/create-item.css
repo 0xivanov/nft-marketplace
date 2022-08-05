@@ -1,0 +1,23 @@
+.form__input input , .form__input textarea{
+    width: 100%;
+    padding: 7px 25px;
+    color: #FFF;
+    font-size: 0.9rem;
+    background: transparent;
+    border: 1px solid rgba(221, 221, 221, 0.171);
+    outline: none;
+    border-radius: 5px;
+}
+
+.form__input {
+    margin-bottom: 15px;
+}
+
+.form__input label {
+    color: #FFF;
+    margin-bottom: 10px;
+}
+
+.form__input .upload__input {
+    padding: 10px 25px;
+}

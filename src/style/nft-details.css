@@ -1,0 +1,43 @@
+.single__nft-img {
+    border-radius: 8px;
+}
+
+.single__nft-seen span i{
+    color: #FFF;
+    padding: 5px;
+    background: #000;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+.single__nft-seen span {
+    color: #FFF;
+    font-size: 0.8rem;
+}
+
+
+.creator__detail p {
+    font-size: 1rem;
+    font-weight: 300;
+    margin-bottom: 0px !important;
+    margin-top: 0 !important;
+}
+
+.creator__detail h6 {
+    color: #FFF;
+    margin-bottom: 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.nft__creator {
+    background: #343444;
+    padding: 20px;
+    border-radius: 7px;
+    width: 50%;
+}
+
+.creator__img{
+    width: 50px;
+    height: 50px;
+}
