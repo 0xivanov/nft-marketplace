@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Modal from './Modal'
 
@@ -6,16 +6,18 @@ import Modal from './Modal'
 const NftCard = (props) => {
 
     const {title, id, currentBid, creatorImg, imgUrl, creator} = props.item
-
     const [showModal, setShowModal] = useState(false)
 
   return (
     <div className="single__nft__card">
     <div className="nft__img">
-            <img src={imgUrl} alt="" className='w-100' />
+        <img src={imgUrl} alt="" className='w-100' />
     </div>
     <div className="nft__content">
-        <h5 className="nft__title"><Link to={`/market/${id}`}>{title}</Link></h5>
+        <h5 className="nft__title">
+            {showModal && <Link to={`/market/${id}`}>{title}</Link>}
+            {!showModal && <div>{title}</div>}
+            </h5>
         <div className="creator__info__wrapper d-flex gap-3">
             <div className="creator__img">
                 <img src={creatorImg} alt="" className='w-100' />
@@ -32,7 +34,7 @@ const NftCard = (props) => {
             </div>
         </div>
         <div className="bid__btn d-flex align-items-center justify-content-between">
-            <button className="btn d-flex align-items-center gap-2" onClick={() => {setShowModal(true)}}>
+            <button disabled={props.isInCreation} className="btn d-flex align-items-center gap-2" onClick={() => {setShowModal(true)}}>
                 <i class="ri-shopping-bag-line"></i>
                 Place Bid
             </button>

@@ -81,6 +81,10 @@
     color: #FFF;
 }
 
+.bid__btn .btn:disabled {
+    color:#FFF
+}
+
 @media only screen and (max-width: 992px) {
     .nft__title{
         font-size: 0.8rem !important;

@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, {useState } from 'react'
 import { Container, Row, Col } from 'reactstrap'
+import fetch from 'node-fetch'
 import CommonSection from '../ui/CommonSection'
 import NftCard from '../ui/NftCard'
 import img05 from '../../img/img-05.jpg'
@@ -10,24 +11,34 @@ import '../ui/live-auction.css'
 const Create = () => {
 
   const [item, setItem] = useState({
-    id: "05",
     title: "Travel Monkey Club",
     desc: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam adipisci cupiditate officia, nostrum et deleniti vero corrupti facilis minima laborum nesciunt nulla error natus saepe illum quasi ratione suscipit tempore dolores. Recusandae, similique modi voluptates dolore repellat eum earum sint.",
     imgUrl: img05,
     creator: "Trista Francis",
-    creatorImg: ava05,
+    creatorImg : ava05,
     currentBid: 4.89,
-    category: 'art'
+    category: 'art',
+    expirationDate: new Date()
   })
 
   const onImageChange = (event) => {
+    console.log(event)
     if (event.target.files && event.target.files[0]) {
-      let reader = new FileReader();
-      reader.onload = (e) => {
-        setItem({image: e.target.result});
-      };
-      reader.readAsDataURL(event.target.files[0]);
+      item.imgUrl = URL.createObjectURL(event.target.files[0])
     }
+  }
+
+  const postCreate = async () => {
+    const params = new URLSearchParams();
+    params.append('a', 1);
+    const response = await fetch('/create', {
+      method: 'post',
+      body: JSON.stringify(item),
+      headers: {'Content-Type': 'application/json'}
+    });
+    const data = await response.json();
+
+    console.log(data);
   }
 
   return <>
@@ -38,7 +49,7 @@ const Create = () => {
       <Row>
         <Col lg='4' mb='4' ms='6'>
           <h5 className='mb-4 text-light'>Preview Item</h5>
-          <NftCard className='preview__card' item={item} />
+          <NftCard className='preview__card' item={item} isInCreation={true} />
         </Col>
         <Col>
           <div className="create__item">
@@ -55,7 +66,7 @@ const Create = () => {
 
                 <div className="form__input w-50">
                   <label>Upload File</label>
-                  <input type="file" className='upload__input' onChange={(value) => {onImageChange()}}/>
+                  <input type="file" className='upload__input' onChange={onImageChange}/>
                 </div>
 
                 <div className="form__input w-50">
@@ -66,18 +77,25 @@ const Create = () => {
                 <div className="d-flex align-items-center justify-content-between">
                   <div className="form__input w-50">
                     <label>Expiration Date</label>
-                    <input type="date" className='upload__input'/>
+                    <input type="date" className='upload__input' onChange={input => item.expirationDate = new Date(input.target.value)}/>
                   </div>
                 </div>
 
-                <div className="form__input w-50">
-                  <div className="bid__btn d-flex align-items-center justify-content-between">
+                <div className="form__input w-50 d-flex align-items-center justify-content-between">
+                  <div className="bid__btn">
                     <button type='button' className="btn d-flex align-items-center gap-2" onClick={() => {
                       let updatedItem = item
+                      console.log(item)
                       setItem(item => ({...item, ...updatedItem}))
                     }}>
-                        <i class="ri-shopping-bag-line"></i>
-                        Place Bid
+                        <i class="ri-search-eye-line"></i>
+                        Preview
+                    </button>
+                  </div>
+                  <div className="bid__btn">
+                    <button type='button' className="btn d-flex align-items-center gap-2" onClick={() => {postCreate()}}>
+                        <i class="ri-building-3-line"></i>
+                        Create
                     </button>
                   </div>
                 </div>
