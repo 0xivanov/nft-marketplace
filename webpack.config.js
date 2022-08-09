@@ -6,5 +6,6 @@ module.exports = {
         new webpack.ProvidePlugin({
             process: 'process/browser',
      }),
-    ]
+    ],
+    target: 'node'
 }

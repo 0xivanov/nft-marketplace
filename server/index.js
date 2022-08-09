@@ -1,8 +1,14 @@
 import * as express from "express";
+var bodyParser = require('body-parser')
 import nft from './db/nft'
 
 const app = express()
-app.use(express.json())
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({
+    parameterLimit: 10000000,
+    limit: '50mb',
+    extended: true
+  }));
 
 const port = 3001
 

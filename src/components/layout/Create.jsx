@@ -13,18 +13,25 @@ const Create = () => {
   const [item, setItem] = useState({
     title: "Travel Monkey Club",
     desc: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam adipisci cupiditate officia, nostrum et deleniti vero corrupti facilis minima laborum nesciunt nulla error natus saepe illum quasi ratione suscipit tempore dolores. Recusandae, similique modi voluptates dolore repellat eum earum sint.",
-    imgUrl: img05,
+    imgUrl: null,
     creator: "Trista Francis",
     creatorImg : ava05,
     currentBid: 4.89,
     category: 'art',
-    expirationDate: new Date()
+    expirationDate: new Date(),
+    img: null,
+    imgFormat: null
   })
 
   const onImageChange = (event) => {
-    console.log(event)
+    console.log(event.target.files[0])
     if (event.target.files && event.target.files[0]) {
       item.imgUrl = URL.createObjectURL(event.target.files[0])
+      const file = event.target.files[0]
+      const reader = new window.FileReader()
+      reader.readAsArrayBuffer(file)
+      reader.onloadend = () => {item.img = Buffer(reader.result, 'base64')}
+      item.imgFormat = event.target.files[0].type
     }
   }
 
@@ -93,7 +100,10 @@ const Create = () => {
                     </button>
                   </div>
                   <div className="bid__btn">
-                    <button type='button' className="btn d-flex align-items-center gap-2" onClick={() => {postCreate()}}>
+                    <button type='button' className="btn d-flex align-items-center gap-2" onClick={() => {
+                      console.log(item.img)
+                      postCreate()
+                    }}>
                         <i class="ri-building-3-line"></i>
                         Create
                     </button>

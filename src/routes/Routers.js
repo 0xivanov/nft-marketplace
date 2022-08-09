@@ -18,7 +18,7 @@ const Routers = () => {
         <Route path="/market" element={<Market/>} />
         <Route path="/create" element={<Create/>} />
         <Route path="/profile" element={<Profile/>} />
-        <Route path="/market/:id" element={<NftDetails/>} />
+        <Route path="/market/:_id" element={<NftDetails/>} />
 
     </Routes>
   )

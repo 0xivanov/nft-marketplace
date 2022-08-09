@@ -10,8 +10,11 @@ const NFT = mongoose.model('NFT', {
   desc: {
     type: String
   },
-  imgUrl: {
+  imgFormat: {
     type: String
+  },
+  img: {
+    type: Buffer
   },
   creator: {
     type: String
