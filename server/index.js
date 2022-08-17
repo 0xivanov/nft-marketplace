@@ -14,7 +14,7 @@ const port = 3001
 
 app.post('/create', (req, resp) => {
     
-    console.log(req.body)
+    //console.log(req.body)
     nft.create(req.body)
     resp.send(req.body)
 })

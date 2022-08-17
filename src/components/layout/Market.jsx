@@ -3,6 +3,7 @@ import { Container, Row, Col } from 'reactstrap'
 import CommonSection from '../ui/CommonSection'
 import NftCard from '../ui/NftCard'
 import '../../style/market.css'
+import Loader from '../ui/Loader'
 
 const Market = () => {
   
@@ -26,7 +27,6 @@ const getNfts = async () => {
   });
 
   let data = await response.json();
-  console.log(data)
   return data
 }
 
@@ -34,12 +34,19 @@ useEffect(() => {
   getNfts().then((nfts) => {
     setnftData(nfts)
     setfilteredData(nfts)
+    setIsPending(false)
   })
-  setIsPending(false)
 }, [])
 
   return <>
-    {isPending && <div>Loading</div>}
+    {isPending && <>
+    <CommonSection title={'MarketPlace'}/>
+    <section className='main__section'>
+      <Container>
+        <Loader/>
+      </Container>
+    </section>
+    </>}
     {nftData && <>
     <CommonSection title={'MarketPlace'}/>
     <section className='main__section'>
@@ -62,7 +69,7 @@ useEffect(() => {
           </Col>
           {
             filteredData.map((item) => (
-              item && <Col lg='3' md='4' sm='6'><NftCard showLink={true} item={item} /></Col>
+              item && <Col key={item._id} lg='3' md='4' sm='6'><NftCard showLink={true} item={item} /></Col>
             ))
           }
         </Row>

@@ -6,6 +6,7 @@ import '../../style/nft-details.css'
 import LiveAuction from '../ui/LiveAuction'
 import '../ui/live-auction.css'
 import Modal from '../ui/Modal'
+import Loader from '../ui/Loader'
 
 const NftDetails = () => {
   
@@ -14,6 +15,7 @@ const NftDetails = () => {
   const [singleNft, setSingleNft] = useState()
   const [showModal, setShowModal] = useState(false)
   const [isPending, setIsPending] = useState(true)
+  const [_img, _setImg] = useState()
 
   const getNfts = async () => {
     const response = await fetch('/market', {
@@ -22,27 +24,39 @@ const NftDetails = () => {
     });
   
     let data = await response.json();
-    console.log(data)
     return data
   }
 
   useEffect(() => {
     getNfts().then((nfts) => {
-      setSingleNft(nfts.find(item => item._id === _id))
+      let nft = nfts.find(item => item._id === _id)
+      setSingleNft(nft)
+      
+      if(nft.img === null) return
+      var base64String = btoa(
+          new Uint8Array(nft.img.data)
+            .reduce((data, byte) => data + String.fromCharCode(byte), '')
+        );
+      _setImg(base64String)
+      setIsPending(false)
     })
-    setIsPending(false)
   }, [])
 
 
   return <>
-  {isPending && <div>Loading</div>}
+  {isPending && <>
+    <CommonSeciton />
+    <section>
+      <Loader />
+    </section>
+  </>}
   {singleNft && <>
     <CommonSeciton />
     <section>
       <Container>
         <Row>
           <Col lg='6' md='6' sm='6'>
-            <img src={singleNft.imgUrl} alt="" className='w-100 single__nft-img' />
+            <img src={`data:${singleNft.imgFormat};base64,${_img}`} alt="" className='w-100 single__nft-img' />
           </Col>
           <Col lg='6'>
             <div className="single__nft__content">
@@ -56,9 +70,6 @@ const NftDetails = () => {
               </div>
   
               <div className="nft__creator  d-flex gap-5">
-                <div className="creator__img">
-                  <img src={singleNft.creatorImg} alt="creator" className='w-100' />
-                </div>
                 <div className="creator__detail">
                   <p>Created By</p>
                   <h6>{singleNft.creator}</h6>

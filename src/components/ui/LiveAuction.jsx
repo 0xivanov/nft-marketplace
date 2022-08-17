@@ -1,12 +1,41 @@
 import React from 'react'
+import { useState, useEffect } from 'react'
 import {Container, Row, Col} from 'reactstrap'
 import {Link} from 'react-router-dom'
 import './live-auction.css'
 import NftCard from './NftCard'
+import Loader from './Loader'
 
 const LiveAuction = () => {
-  return (
-    <section>
+
+
+const [nftData, setnftData] = useState(null)
+const [isPending, setIsPending] = useState(true)
+
+const getNfts = async () => {
+    const response = await fetch('/market', {
+        method: 'get',
+        headers: {'Content-Type': 'application/json'}
+    });
+    
+    let data = await response.json();
+    return data
+    }
+    
+    useEffect(() => {
+    getNfts().then((nfts) => {
+        setnftData(nfts)
+        setIsPending(false)
+    })
+    }, [])
+
+  return <>
+      {isPending && <section>
+        <Container>
+            <Loader />
+        </Container>
+        </section>}
+      {nftData && <section>
         <Container>
             <Row>
                 <Col lg='12' className='mb-4'>
@@ -15,17 +44,16 @@ const LiveAuction = () => {
                         <span><Link to='/market'>Explore more</Link></span>
                     </div>
                 </Col>
-                {/* {
-                    NFT__DATA.slice(0,4).map((item) => (
-                        <Col lg='3' md='4' sm='6'>
-                            <NftCard key={item.id} item={item} />
-                        </Col>
+                {
+                    nftData.slice(0,4).map((item) => (
+                    item && <Col key={item._id} lg='3' md='4' sm='6'><NftCard showLink={true} item={item} /></Col>
                     ))
-                } */}
+                }
             </Row>
         </Container>
     </section>
-  )
+    }
+  </>
 }
 
 export default LiveAuction
