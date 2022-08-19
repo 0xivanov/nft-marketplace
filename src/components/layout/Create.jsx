@@ -36,9 +36,7 @@ const Create = () => {
   }
 
   const postCreate = async () => {
-    const params = new URLSearchParams();
     try {
-      params.append('a', 1)
       const response = await fetch('/create', {
         method: 'post',
         body: JSON.stringify(item),

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { Container } from 'reactstrap'
-import {NavLink, Link} from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import './header.css'
 
 const NAV_LINKS = [

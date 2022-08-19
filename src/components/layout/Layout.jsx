@@ -3,12 +3,14 @@ import Footer from '../footer/Footer'
 import Header from '../header/Header'
 import Routers from '../../routes/Routers'
 import { ethers } from 'ethers'
+import Profile from './Profile'
 
 const Layout = () => {
 
   
   const [account, setAccount] = useState()
   const [provider, setProvider] = useState()
+  const [token, setToken] = useState();
 
   useEffect(() => {
     const accountChangeListener = () => {
@@ -42,7 +44,9 @@ const Layout = () => {
     <>
         <Header connectAccount={connectAccount} account={account}/>
         <div>
-            <Routers />
+        <Routers />
+            {/* {!token &&  <Profile setToken={setToken} />}
+            {token && <Routers />} */}
         </div>
         <Footer/>
     </>

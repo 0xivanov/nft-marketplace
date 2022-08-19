@@ -38,11 +38,6 @@ const NFT = mongoose.model('NFT', {
   expirationDate: {
     type: Date
   },
-  views: {
-    type: Number,
-    required: false,
-    default: 0
-  },
   likes: {
     type: Number,
     required: false,
@@ -53,7 +48,7 @@ const NFT = mongoose.model('NFT', {
 const create = async (nft) => {
 
   const _nft = new NFT(nft)
-  _nft.save().then(() => { console.log("dsfdfsdfsd") }).catch((e) => { console.log(e) })
+  _nft.save().then(() => { console.log("created new nft") }).catch((e) => { console.log(e) })
 }
 
 const getAll = (fn) => {
@@ -62,4 +57,10 @@ const getAll = (fn) => {
   }).catch((e) => { console.log(e) })
 }
 
-export default { create, getAll };
+const like = (isLiked, _id) => {
+  console.log(isLiked.isLiked)
+  if(isLiked.isLiked) NFT.findOneAndUpdate({_id: _id}, {$inc : {'likes' : -1}}).exec()
+  else NFT.findOneAndUpdate({_id: _id}, {$inc : {'likes' : 1}}).exec()
+}
+
+export default { create, getAll, like };

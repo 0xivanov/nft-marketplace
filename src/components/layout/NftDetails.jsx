@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import CommonSeciton from '../ui/CommonSection'
 import { useParams } from 'react-router-dom'
 import { Container, Row, Col } from 'reactstrap'
@@ -11,10 +11,14 @@ import Loader from '../ui/Loader'
 const NftDetails = () => {
   
   const { _id } = useParams()
+
+  const likeRef = useRef(null);
+  const toggleLike = () => likeRef.current.classList.toggle('liked')
   
   const [singleNft, setSingleNft] = useState()
   const [showModal, setShowModal] = useState(false)
   const [isPending, setIsPending] = useState(true)
+  const [isLiked, setIsLiked] = useState(false)
   const [_img, _setImg] = useState()
 
   const getNfts = async () => {
@@ -25,6 +29,34 @@ const NftDetails = () => {
   
     let data = await response.json();
     return data
+  }
+
+  const like = async () => {
+    try {
+      var updatedItem = singleNft
+      if(isLiked) {
+        await fetch(`/market/${encodeURIComponent(_id)}`, {
+          method: 'post',
+          body: JSON.stringify({isLiked: true}),
+          headers: {'Content-Type': 'application/json'}
+        });
+        setIsLiked(false)
+        updatedItem.likes--
+        setSingleNft(item => ({...item, ...updatedItem}))
+      } else {
+        await fetch(`/market/${encodeURIComponent(_id)}`, {
+          method: 'post',
+          body: JSON.stringify({isLiked: false}),
+          headers: {'Content-Type': 'application/json'}
+        });
+        setIsLiked(true)
+        updatedItem.likes++
+        setSingleNft(item => ({...item, ...updatedItem}))
+      }
+      
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(() => {
@@ -63,9 +95,11 @@ const NftDetails = () => {
               <h2>{singleNft.title}</h2>
   
               <div className="d-flex align-items-center justify-content-between mt-4 mb-4">
-                <div className="d-flex align-items-center gap-5 single__nft-seen">
-                  <span><i class="ri-eye-line"></i>123</span>
-                  <span><i class="ri-heart-line"></i>312</span>
+                <div className="d-flex align-items-center gap-5 single__nft-like">
+                  <span><i ref={likeRef} onClick={() => {
+                    like()
+                    toggleLike()
+                  }} class="ri-heart-line"></i>{singleNft.likes}</span>
                 </div>
               </div>
   

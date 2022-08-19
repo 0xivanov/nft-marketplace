@@ -1,0 +1,36 @@
+
+.wrapper {
+    padding-left: 30% !important;
+    padding-right: 30% !important;
+    text-align: center;
+}
+.connect {
+    padding: 0px;
+}
+
+.connect .btn {
+    padding: 7px 25px;
+    border: 1px solid #5243FC;
+    border-radius: 5px;
+}
+
+
+.connect .btn div {
+    color: #FFF;
+    text-decoration: none;
+    font-style: 0.8rem;
+    display: inline-block;
+}
+
+.connect .btn a:hover {
+    color: #FFF;
+}
+
+.connect .btn i {
+    font-size:2rem;
+    color: #FFF;
+}
+
+.connect .btn a:hover {
+    color: #FFF;
+}
