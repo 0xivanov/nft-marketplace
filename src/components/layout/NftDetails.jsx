@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import CommonSeciton from '../ui/CommonSection'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { Container, Row, Col } from 'reactstrap'
 import '../../style/nft-details.css'
 import LiveAuction from '../ui/LiveAuction'
@@ -8,7 +8,7 @@ import '../ui/live-auction.css'
 import Modal from '../ui/Modal'
 import Loader from '../ui/Loader'
 
-const NftDetails = () => {
+const NftDetails = ({token}) => {
   
   const { _id } = useParams()
 
@@ -20,6 +20,7 @@ const NftDetails = () => {
   const [isPending, setIsPending] = useState(true)
   const [isLiked, setIsLiked] = useState(false)
   const [_img, _setImg] = useState()
+  const navigate = useNavigate()
 
   const getNfts = async () => {
     const response = await fetch('/market', {
@@ -111,7 +112,10 @@ const NftDetails = () => {
               </div>
               <p className='my-4'>{singleNft.desc}</p>
               <div className="bid__btn d-flex align-items-center justify-content-between">
-              <button className="btn d-flex align-items-center gap-2" onClick={() => {setShowModal(true)}}>
+              <button className="btn d-flex align-items-center gap-2" onClick={() => {
+                if(!token) navigate('/profile')
+                else setShowModal(true)
+              }}>
                   <i class="ri-shopping-bag-line"></i>
                   Place Bid
               </button>

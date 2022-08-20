@@ -4,19 +4,18 @@ import Header from '../header/Header'
 import Routers from '../../routes/Routers'
 import { ethers } from 'ethers'
 import Profile from './Profile'
+import useToken from '../../useToken';
 
 const Layout = () => {
 
-  
-  const [account, setAccount] = useState()
-  const [provider, setProvider] = useState()
-  const [token, setToken] = useState();
+  const { token, setToken } = useToken();
+  const [provider, setProvider] = useState(new ethers.providers.Web3Provider(window.ethereum))
 
   useEffect(() => {
+    console.log(provider)
     const accountChangeListener = () => {
       window.ethereum.on("accountsChanged", (accounts) => {
-        setAccount(accounts[0])
-        console.log("after")
+        setToken(accounts[0])
       })
     }
 
@@ -24,11 +23,10 @@ const Layout = () => {
   }, [])
 
   const connectAccount = async () => {
-    console.log("sdfsdfasdfs")
     if(window.ethereum) {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       provider.send("eth_requestAccounts").then((accounts) => {
-        setAccount(accounts[0])
+        handleSubmit(accounts[0])
       })
       .catch((error) => {
         alert("metamask connection rejected")
@@ -40,13 +38,27 @@ const Layout = () => {
     }
   }
 
+  const handleSubmit = async (account) => {
+    const token = await loginUser({account});
+    setToken(token.token);
+  }
+
+
+  async function loginUser(credentials) {
+    return fetch('http://localhost:3000/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(credentials)
+    }).then(data => data.json())
+   }
+
   return (
     <>
-        <Header connectAccount={connectAccount} account={account}/>
+        <Header account={token} />
         <div>
-        <Routers />
-            {/* {!token &&  <Profile setToken={setToken} />}
-            {token && <Routers />} */}
+          <Routers token={token} setToken={setToken} connectAccount={connectAccount} />
         </div>
         <Footer/>
     </>

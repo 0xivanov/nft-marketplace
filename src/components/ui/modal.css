@@ -22,7 +22,7 @@
 }
 
 .single__modal h6{
-    font-style: 1.1rem;
+    font-size: 1.1rem;
     font-weight: 500;
     margin-bottom: 10px;
 }
@@ -30,7 +30,6 @@
 .single__modal .money {
     color: #FFF;
     font-weight: 500;
-    font-style: 1.1rem;
 }
 
 .input__item input {

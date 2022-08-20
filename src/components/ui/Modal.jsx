@@ -16,17 +16,17 @@ const Modal = ({setShowModal}) => {
                 <input type="number" placeholder='Enter quantity'/>
             </div>
 
-            <div className='d-flex align-items-center justify-content-between'>
+            <div className='d-flex align-items-center justify-content-between gap-3'>
                 <p>Minimum bid</p>
                 <span className='money'>0.001 ETH</span>
             </div>
 
-            <div className='d-flex align-items-center justify-content-between'>
+            <div className='d-flex align-items-center justify-content-between gap-3'>
                 <p>Service Fee</p>
                 <span className='money'>0.001 ETH</span>
             </div>
 
-            <div className='d-flex align-items-center justify-content-between'>
+            <div className='d-flex align-items-center justify-content-between gap-3'>
                 <p>Total Bid Ammount</p>
                 <span className='money'>324 ETH</span>
             </div>

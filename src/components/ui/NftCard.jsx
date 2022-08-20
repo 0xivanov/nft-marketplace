@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Modal from './Modal'
 
 
@@ -9,6 +9,7 @@ const NftCard = (props) => {
     const [showModal, setShowModal] = useState(false)
     const [_img, _setImg] = useState()
     const [isPending, setIsPending] = useState(true)
+    const navigate = useNavigate()
 
     const timeLeft = (strDate) => {  
         const dt = new Date(strDate);  
@@ -56,7 +57,10 @@ const NftCard = (props) => {
             </div>
         </div>
         <div className="bid__btn d-flex align-items-center justify-content-between">
-            <button disabled={props.isInCreation} className="btn d-flex align-items-center gap-2" onClick={() => {setShowModal(true)}}>
+            <button disabled={props.isInCreation} className="btn d-flex align-items-center gap-2" onClick={() => {
+                if(!props.token) navigate('/profile')
+                else setShowModal(true)
+            }}>
                 <i class="ri-shopping-bag-line"></i>
                 Place Bid
             </button>

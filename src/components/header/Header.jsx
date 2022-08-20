@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { Container } from 'reactstrap'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import './header.css'
 
 const NAV_LINKS = [
@@ -22,9 +22,10 @@ const NAV_LINKS = [
     },
 ]
 
-const Header = ({connectAccount, account}) => {
+const Header = ({account}) => {
 
     const menuRef = useRef(null);
+    const navigate = useNavigate()
     const toggleMenu = () => menuRef.current.classList.toggle('active__menu')
 
     const headerRef = useRef(null)
@@ -63,7 +64,7 @@ const Header = ({connectAccount, account}) => {
             </ul>
         </div>
         <div className="nav__right d-flex align-items-center gap-5">
-            <button onClick={() => connectAccount()} disabled={account} className="btn">
+            <button onClick={()=>navigate("/profile")} disabled={account} className="btn">
                 <div className='d-flex gap-2 align-items-center'><i className="ri-wallet-3-line"></i>
                 {
                     account ? account : "Connect Account"

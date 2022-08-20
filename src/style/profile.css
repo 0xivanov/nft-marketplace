@@ -1,7 +1,7 @@
 
 .wrapper {
-    padding-left: 30% !important;
-    padding-right: 30% !important;
+    padding-left: 33% !important;
+    padding-right: 33% !important;
     text-align: center;
 }
 .connect {
@@ -12,6 +12,7 @@
     padding: 7px 25px;
     border: 1px solid #5243FC;
     border-radius: 5px;
+    width: 100%;
 }
 
 
@@ -19,7 +20,6 @@
     color: #FFF;
     text-decoration: none;
     font-style: 0.8rem;
-    display: inline-block;
 }
 
 .connect .btn a:hover {
@@ -33,4 +33,65 @@
 
 .connect .btn a:hover {
     color: #FFF;
+}
+
+.connect .icon {
+    height: 25px;
+}
+
+.popular {
+    background: #5243FC;
+    font-size: 0.9rem;
+    border-radius: 5px;
+}
+
+.solana {
+    background: rgb(158, 214, 253);
+    font-size: 0.9rem;
+    border-radius: 5px;
+}
+
+.st0{fill:#E2761B;stroke:#E2761B;stroke-linecap:round;stroke-linejoin:round;}
+.st1{fill:#E4761B;stroke:#E4761B;stroke-linecap:round;stroke-linejoin:round;}
+.st2{fill:#D7C1B3;stroke:#D7C1B3;stroke-linecap:round;stroke-linejoin:round;}
+.st3{fill:#233447;stroke:#233447;stroke-linecap:round;stroke-linejoin:round;}
+.st4{fill:#CD6116;stroke:#CD6116;stroke-linecap:round;stroke-linejoin:round;}
+.st5{fill:#E4751F;stroke:#E4751F;stroke-linecap:round;stroke-linejoin:round;}
+.st6{fill:#F6851B;stroke:#F6851B;stroke-linecap:round;stroke-linejoin:round;}
+.st7{fill:#C0AD9E;stroke:#C0AD9E;stroke-linecap:round;stroke-linejoin:round;}
+.st8{fill:#161616;stroke:#161616;stroke-linecap:round;stroke-linejoin:round;}
+.st9{fill:#763D16;stroke:#763D16;stroke-linecap:round;stroke-linejoin:round;}
+
+
+.gradient-custom {
+    /* fallback for old browsers */
+    background: #f6d365;
+  
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: -webkit-linear-gradient(-45deg, #e250E5, #4b50e6);
+  
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: -webkit-linear-gradient(-45deg, #e250E5, #4b50e6);
+  }
+.social__links__user span a {
+    text-decoration: none;
+    color: rgb(37, 36, 36);
+    opacity: 85%;
+    font-size: 1.2rem;
+    font-weight: 400;
+    transition: 0.3s;
+}
+
+.social__links__user span a:hover {
+    color: #e250e5;
+}
+
+.edit__profile .btn{
+    padding: 7px 25px;
+    border-radius: 50px;
+    color: #FFF;
+    text-decoration: none;
+    font-style: 0.5rem;
+    display: inline-block;
+    transition: 0.3s;
 }

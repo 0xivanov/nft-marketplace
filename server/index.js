@@ -15,9 +15,10 @@ app.use(cors())
 const port = 3001
 
 
-app.get('/login', (req, res) => {
+app.use('/login', (req, res) => {
+  console.log(req.body)
     res.send({
-      token: 'test123'
+      token: req.body.account
     });
   });
 

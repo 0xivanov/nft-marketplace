@@ -5,7 +5,7 @@ import NftCard from '../ui/NftCard'
 import '../../style/market.css'
 import Loader from '../ui/Loader'
 
-const Market = () => {
+const Market = ({token}) => {
   
 const [nftData, setnftData] = useState(null)
 const [filteredData, setfilteredData] = useState(null)
@@ -69,7 +69,7 @@ useEffect(() => {
           </Col>
           {
             filteredData.map((item) => (
-              item && <Col key={item._id} lg='3' md='4' sm='6'><NftCard showLink={true} item={item} /></Col>
+              item && <Col key={item._id} lg='3' md='4' sm='6'><NftCard token={token} showLink={true} item={item} /></Col>
             ))
           }
         </Row>
