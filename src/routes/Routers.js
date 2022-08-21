@@ -8,6 +8,7 @@ import Seller from '../components/layout/Seller'
 import Create from '../components/layout/Create'
 import Market from '../components/layout/Market'
 import Home from '../components/layout/Home'
+import EditProfile from '../components/ui/EditProfile'
 
 const Routers = ({token, setToken, connectAccount}) => {
   return (
@@ -19,6 +20,8 @@ const Routers = ({token, setToken, connectAccount}) => {
         {token && <Route path="/create" element={<Create token={token}/>} />}
         {!token && <Route path="/create" element={<Navigate to="/profile"/>} />}
         <Route path="/profile" element={<Profile token={token} setToken={setToken} connectAccount={connectAccount} />} />
+        {!token && <Route path="/profile/edit" element={<Navigate to="/profile"/>} />}
+        {token && <Route path="/profile/edit" element={<EditProfile />} />}
         <Route path="/market/:_id" element={<NftDetails token={token}/>} />
     </Routes>
   )

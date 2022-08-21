@@ -6,7 +6,7 @@ const Modal = ({setShowModal}) => {
     <div className="modal__wrapper">
         <div className="single__modal">
             <span className="close__modal">
-                <i class="ri-close-circle-line" onClick={() => {setShowModal(false)}}></i>
+                <i className="ri-close-circle-line" onClick={() => {setShowModal(false)}}></i>
                 </span>
             <h6 className='text-center text-light'>Place Bid</h6>
             <p className='text-center text-light'> You must bid at least <span className='money'>5 ETH</span></p>

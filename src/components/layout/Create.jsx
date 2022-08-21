@@ -35,7 +35,7 @@ const Create = () => {
     }
   }
 
-  const postCreate = async () => {
+  const createPost = async () => {
     try {
       const response = await fetch('/create', {
         method: 'post',
@@ -106,15 +106,15 @@ const Create = () => {
                       let updatedItem = item
                       setItem(item => ({...item, ...updatedItem}))
                     }}>
-                        <i class="ri-search-eye-line"></i>
+                        <i className="ri-search-eye-line"></i>
                         Preview
                     </button>
                   </div>
                   <div className="bid__btn">
                     <button type='button' className="btn d-flex align-items-center gap-2" onClick={() => {
-                      postCreate()
+                      createPost()
                     }}>
-                        <i class="ri-building-3-line"></i>
+                        <i className="ri-building-3-line"></i>
                         Create
                     </button>
                   </div>

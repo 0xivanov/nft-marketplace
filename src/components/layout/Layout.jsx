@@ -11,6 +11,7 @@ const Layout = () => {
   const { token, setToken } = useToken();
   const [provider, setProvider] = useState(new ethers.providers.Web3Provider(window.ethereum))
 
+
   useEffect(() => {
     console.log(provider)
     const accountChangeListener = () => {
@@ -21,6 +22,36 @@ const Layout = () => {
 
     accountChangeListener()
   }, [])
+
+  const createProfile = async (token) => {
+    const _token = await token
+    const profile = {
+      pubkey: _token.token,
+      name: "Marie Horwitz",
+      proficiency: "Web Designer",
+      email: "info@gmail.com",
+      facebook: "#",
+      instagram: "#",
+      twitter: "#",
+      img: null,
+      imgFormat: null,
+      imgUrl: null,
+      likedNfts: null
+    }
+
+
+    try {
+      const response = await fetch('/profile/create', {
+        method: 'post',
+        body: JSON.stringify(profile),
+        headers: {'Content-Type': 'application/json'}
+      });
+      const data = await response.json()
+      console.log(data);
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const connectAccount = async () => {
     if(window.ethereum) {
@@ -51,7 +82,11 @@ const Layout = () => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(credentials)
-    }).then(data => data.json())
+    }).then(data => {
+      let token = data.json()
+      createProfile(token)
+      return token
+    })
    }
 
   return (

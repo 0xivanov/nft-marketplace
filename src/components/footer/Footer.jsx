@@ -107,9 +107,9 @@ const Footer = () => {
               <h5>Newsletter</h5>
               <input type="text" className="newsletter" placeholder='Email'/>
               <div className="social__links d-flex gap-3">
-                <span><Link to='#'><i class="ri-facebook-circle-fill"></i></Link></span>
-                <span><Link to='#'><i class="ri-instagram-line"></i></Link></span>
-                <span><Link to='#'><i class="ri-twitter-line"></i></Link></span>
+                <span><Link to='#'><i className="ri-facebook-circle-fill"></i></Link></span>
+                <span><Link to='#'><i className="ri-instagram-line"></i></Link></span>
+                <span><Link to='#'><i className="ri-twitter-line"></i></Link></span>
               </div>
             </Col>
             <Col lg='12' className='mt-4 text-center'>

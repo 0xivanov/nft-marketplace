@@ -1,6 +1,6 @@
 import * as express from "express";
 var bodyParser = require('body-parser')
-import nft from './db/nft'
+import db from './db/db'
 const cors = require('cors');
 
 const app = express()
@@ -23,20 +23,34 @@ app.use('/login', (req, res) => {
   });
 
 app.post('/create', (req, resp) => {
-    
-    nft.create(req.body)
+    console.log(req.body)
+    db.createNft(req.body)
     resp.send(req.body)
 })
 
-app.get('/market', (req, resp) => {
-    nft.getAll((result) => {
-        resp.send(result)
-    })
+app.get('/market', async (req, resp) => {
+    let result = await db.getAllNfts()
+    resp.send(result)
 })
 
 app.post('/market/:_id', (req, resp) => {
-    nft.like(req.body, req.params._id)
-    resp.send(req.body)
+    db.likeNft(req.body, req.params._id)
+})
+
+app.post('/profile/create', async (req, resp) => {
+  let result = await db.createProfile(req.body)
+  resp.send(result)
+})
+
+app.post('/profile', async (req, resp) => {
+  console.log(req.body)
+  let result = await db.getProfile(req.body)
+  resp.send(result)
+})
+
+app.post('/profile/edit', async (req, resp) => {
+  let result = await db.createProfile(req.body, req.params._id)
+  resp.send(result)
 })
 
 app.listen(port, () => {

@@ -16,14 +16,14 @@ const Hero = () => {
                         <div className="hero__btns d-flex align-items-center gap-4">
                             <Link className='btn' to='/market'>
                             <div className='explore__btn d-flex align-items-center gap-2'>
-                                <i class="ri-rocket-line"></i>
+                                <i className="ri-rocket-line"></i>
                                 <div>Explore</div>
                             </div>
                             </Link>
                             
                             <Link className='btn' to='/create'>
                             <div className='create__btn d-flex align-items-center gap-2'>
-                                <i class="ri-ball-pen-line"></i>
+                                <i className="ri-ball-pen-line"></i>
                                 Create
                             </div>
                             </Link>

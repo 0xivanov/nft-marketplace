@@ -61,7 +61,7 @@ const NftCard = (props) => {
                 if(!props.token) navigate('/profile')
                 else setShowModal(true)
             }}>
-                <i class="ri-shopping-bag-line"></i>
+                <i className="ri-shopping-bag-line"></i>
                 Place Bid
             </button>
 
