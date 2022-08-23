@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import CommonSection from '../ui/CommonSection'
 import { Container, Row, Col } from 'reactstrap'
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import '../../style/profile.css'
 import metamask from '../../img/metamask.svg'
@@ -8,32 +9,30 @@ import phantom from '../../img/phantom.svg'
 import coinbase from '../../img/coinbase.webp'
 import ProfileCard from '../ui/ProfileCard';
 import Loader from '../ui/Loader';
+import NftCard from '../ui/NftCard';
 
-const Profile = ({token, connectAccount}) => {
+const Profile = ({profile, isPending, token, connectAccount}) => {
 
-  const [profile, setProfile] = useState()
-  const [isPending, setIsPending] = useState(true)
-
-  useEffect(() => {
-    if(token) {
-      getProfile().then((profile) => {
-        console.log(profile)
-        setProfile(profile)
-        setIsPending(false)
-      })
-    }
-  }, [token])
-
-  const getProfile = async () => {
-    const response = await fetch('/profile', {
-      method: 'post',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({token})
-    });
   
+  const [nftData, setnftData] = useState(null)
+  const [isNftPending, setIsNftPending] = useState(true)
+  
+  const getNfts = async () => {
+    const response = await fetch('/market', {
+        method: 'get',
+        headers: {'Content-Type': 'application/json'}
+    });
+    
     let data = await response.json();
     return data
-  }
+    }
+    
+  useEffect(() => {
+    getNfts().then((nfts) => {
+        setnftData(nfts)
+        setIsNftPending(false)
+    })
+  }, [])
 
   return <>
     {!token && <><CommonSection title='Profile'/>
@@ -73,8 +72,28 @@ const Profile = ({token, connectAccount}) => {
 
     {token && <><CommonSection title='Profile'/>
     <section>
-      {profile && <ProfileCard profile={profile} isInCreation={false}/>}
-      {isPending && <Loader />}
+      <Container>
+      <Row>
+        <Col lg='5' mb='4' ms='6'>
+          {profile && <ProfileCard profile={profile} isInCreation={false}/>}
+          {isPending && <Loader />}
+        </Col>
+      </Row>
+      <Row>
+      <Col lg='12' className='mb-4'>
+        <div className="live__auction d-flex align-items-center justify-content-between">
+            <h3>Your NFTS</h3>
+            <span><Link to='/market'>Explore more</Link></span>
+        </div>
+      </Col>
+        {isNftPending && <Loader />}
+        {
+          nftData && profile && nftData.filter(nft => nft.owner == profile._id).map((nft) => (
+            nft && <Col key={nft._id} lg='3' md='4' sm='6'><NftCard token={token} showLink={true} nft={nft} /></Col>
+          ))
+        }
+      </Row>
+      </Container>
     </section></>}
   </>
   

@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react'
-import {Link, useNavigate} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody , MDBCardImage, MDBTypography } from 'mdb-react-ui-kit';
 import './profile-card.css'
+import Loader from './Loader';
 
 const ProfileCard = (props) => {
     
@@ -21,8 +22,9 @@ const ProfileCard = (props) => {
         _setImg(base64String)
         setIsPending(false)
     }, [])
-  return (
-    <MDBContainer className="h-100 profile__card">
+  return <>
+    {isPending && <Loader />}
+    {!isPending && <MDBContainer className="h-100 profile__card">
         <MDBRow className="h-100">
           <MDBCol>
             <MDBCard className="mb-3" style={{ borderRadius: '.5rem' }}>
@@ -30,8 +32,11 @@ const ProfileCard = (props) => {
                 <MDBCol md="4" className="gradient-custom text-center text-white"
                   style={{ borderTopLeftRadius: '.5rem', borderBottomLeftRadius: '.5rem' }}>
                   
-                  {props.isInCreation && <MDBCardImage src={imgUrl} alt="Avatar" className="my-1" style={{ width: '80px'}} fluid />}
-                  {!props.isInCreation && <MDBCardImage src={`data:${imgFormat};base64,${_img}`} alt="Avatar" className="my-1" style={{ width: '80px'}} fluid />}
+                  {props.isInCreation && <MDBCardImage src={imgUrl} alt="Avatar" onError={({currentTarget}) => {
+                        currentTarget.onerror = null // prevents looping
+                        currentTarget.src=`data:${imgFormat};base64,${_img}`
+                  }} className="my-3 avatar" fluid />}
+                  {!props.isInCreation && <MDBCardImage src={`data:${imgFormat};base64,${_img}`} alt="Avatar" className="my-3 avatar" fluid />}
                 {!props.isInCreation && <div className="edit__profile">
                     <button className="btn " disabled={props.isInCreation} onClick={() => {navigate("/profile/edit")}}>
                         <i className="ri-edit-2-line"></i>
@@ -47,14 +52,14 @@ const ProfileCard = (props) => {
                     <hr className="mt-0 mb-4" />
                     <MDBRow className="pt-1">
                       <MDBRow size="6" className="mb-3">
-                        <MDBTypography tag="h6">sdf</MDBTypography>
+                        <MDBTypography tag="h6">Email</MDBTypography>
                         <MDBCardText className="text-muted">{email}</MDBCardText>
                       </MDBRow>
                     </MDBRow>
                     <div className="social__links__user d-flex gap-3">
-                      <span><Link to={facebook}><i className="ri-facebook-circle-fill"></i></Link></span>
-                      <span><Link to={instagram}><i className="ri-instagram-line"></i></Link></span>
-                      <span><Link to={twitter}><i className="ri-twitter-line"></i></Link></span>
+                      <span><a href={facebook}><i className="ri-facebook-circle-fill"></i></a></span>
+                      <span><a href={instagram}><i className="ri-instagram-line"></i></a></span>
+                      <span><a href={twitter}><i className="ri-twitter-line"></i></a></span>
                     </div>
                     </MDBCardBody>
                 </MDBCol>
@@ -62,8 +67,8 @@ const ProfileCard = (props) => {
             </MDBCard>
           </MDBCol>
         </MDBRow>
-      </MDBContainer>
-  )
+      </MDBContainer>}
+  </>
 }
 
 export default ProfileCard

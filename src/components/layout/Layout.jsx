@@ -10,7 +10,29 @@ const Layout = () => {
 
   const { token, setToken } = useToken();
   const [provider, setProvider] = useState(new ethers.providers.Web3Provider(window.ethereum))
+  const [profile, setProfile] = useState()
+  const [isProfilePending, setIsProfilePending] = useState(true)
 
+  useEffect(() => {
+    if(token) {
+      getProfile().then((profile) => {
+        console.log(profile)
+        setProfile(profile)
+        setIsProfilePending(false)
+      })
+    }
+  }, [token])
+
+  const getProfile = async () => {
+    const response = await fetch('/profile', {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({token})
+    });
+  
+    let data = await response.json();
+    return data
+  }
 
   useEffect(() => {
     console.log(provider)
@@ -93,7 +115,7 @@ const Layout = () => {
     <>
         <Header account={token} />
         <div>
-          <Routers token={token} setToken={setToken} connectAccount={connectAccount} />
+          <Routers profile={profile} setProfile={setProfile} isProfilePending={isProfilePending} token={token} setToken={setToken} connectAccount={connectAccount} />
         </div>
         <Footer/>
     </>

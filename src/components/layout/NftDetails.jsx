@@ -62,7 +62,7 @@ const NftDetails = ({token}) => {
 
   useEffect(() => {
     getNfts().then((nfts) => {
-      let nft = nfts.find(item => item._id === _id)
+      let nft = nfts.find(nft => nft._id === _id)
       setSingleNft(nft)
       
       if(nft.img === null) return

@@ -37,7 +37,14 @@ const Profile = mongoose.model('Profile', {
   img: {
     type: Buffer
   },
-  likedNfts: [{ type: Schema.Types.ObjectId, ref: 'NFT' }]
+  imgUrl: {
+    type: String
+  },
+  imgFormat: {
+    type: String
+  },
+  likedNfts: [{ type: Schema.Types.ObjectId, ref: 'NFT' }],
+  ownedNfts: [{ type: Schema.Types.ObjectId, ref: 'NFT' }]
 })
 
 const NFT = mongoose.model('NFT', {
@@ -72,14 +79,19 @@ const NFT = mongoose.model('NFT', {
     type: Number,
     required: false,
     default: 0
-  }
+  },
+  owner: { type: Schema.Types.ObjectId, ref: 'Profile' }
 })
 
-const createNft = async (nft) => {
+const createNft = async (nft, ownerId) => {
 
   const _nft = new NFT(nft)
   return _nft.save().then((nft) => {
     console.log("created new nft")
+    let _id = ownerId
+    Profile.findByIdAndUpdate({_id}, { $push: { ownedNfts: nft } }, {new: true}).then((profile) => {
+      console.log("profile updated")
+    }).catch(e => console.log(e))
     return nft
   }).catch(e => console.log(e))
 }
@@ -106,8 +118,8 @@ const getProfile = async (token) => {
   return Profile.findOne({pubkey: token.token}).then(profile => {return profile}).catch(e => console.log(e))
 }
 
-const editProfile = async (_id, profile) => {
-  return Profile.findOneAndUpdate({_id: _id}, profile).then((profile) => {
+const editProfile = async (profile, _id) => {
+  return Profile.findByIdAndUpdate({_id}, profile, {new: true}).then((profile) => {
     console.log("profile updated")
     return profile
   }).catch(e => console.log(e))

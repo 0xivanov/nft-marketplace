@@ -45,8 +45,8 @@ const getNfts = async () => {
                     </div>
                 </Col>
                 {
-                    nftData.slice(0,4).map((item) => (
-                    item && <Col key={item._id} lg='3' md='4' sm='6'><NftCard showLink={true} item={item} /></Col>
+                    nftData.slice(0,4).map((nft) => (
+                        nft && <Col key={nft._id} lg='3' md='4' sm='6'><NftCard showLink={true} nft={nft} /></Col>
                     ))
                 }
             </Row>

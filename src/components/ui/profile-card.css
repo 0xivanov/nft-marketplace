@@ -1,0 +1,9 @@
+.avatar {
+    width: 80px !important;
+    height: 80px !important;
+    border-radius: 40px;
+}
+
+.proficiency {
+    padding-bottom: 10px !important;
+}

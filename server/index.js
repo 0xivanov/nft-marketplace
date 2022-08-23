@@ -23,8 +23,12 @@ app.use('/login', (req, res) => {
   });
 
 app.post('/create', (req, resp) => {
-    console.log(req.body)
-    db.createNft(req.body)
+  let ownerId = req.body.ownerId
+  let nft = req.body.nft  
+  console.log(ownerId)
+  console.log(nft)
+  console.log(req.body)
+    db.createNft(nft, ownerId)
     resp.send(req.body)
 })
 
@@ -49,7 +53,10 @@ app.post('/profile', async (req, resp) => {
 })
 
 app.post('/profile/edit', async (req, resp) => {
-  let result = await db.createProfile(req.body, req.params._id)
+  console.log(req.body)
+  let profile = req.body
+  let _id = profile._id
+  let result = await db.editProfile(profile, _id)
   resp.send(result)
 })
 

@@ -1,39 +1,41 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Container, Row, Col } from 'reactstrap'
 import ProfileCard from './ProfileCard'
 import CommonSeciton from './CommonSection'
+import Loader from './Loader'
 import './edit-profile.css'
 
 
-const EditProfile = () => {
+const EditProfile = ({profile, setProfile, isPending, token}) => {
 
-    const [profile, setProfile] = useState({
-        name: "Marie Horwitz",
-        proficiency: "Web Designer",
-        email: "info@gmail.com",
-        facebook: "#",
-        instagram: "#",
-        twitter: "#",
-        img: null,
-        imgFormat: null,
-        imgUrl: null,
-        likedNfts: null
-    })
+  const navigate = useNavigate()
 
-    const onImageChange = (event) => {
-        console.log(event.target.files[0])
-        if (event.target.files && event.target.files[0]) {
-          profile.imgUrl = URL.createObjectURL(event.target.files[0])
-          const file = event.target.files[0]
-          const reader = new window.FileReader()
-          reader.readAsArrayBuffer(file)
-          reader.onloadend = () => {profile.img = Buffer(reader.result, 'base64')}
-          profile.imgFormat = event.target.files[0].type
-        }
+  const onImageChange = (event) => {
+      console.log(event.target.files[0])
+      if (event.target.files && event.target.files[0]) {
+        profile.imgUrl = URL.createObjectURL(event.target.files[0])
+        const file = event.target.files[0]
+        const reader = new window.FileReader()
+        reader.readAsArrayBuffer(file)
+        reader.onloadend = () => {profile.img = Buffer(reader.result, 'base64')}
+        profile.imgFormat = event.target.files[0].type
       }
+    }
 
-    const editProfile = () => {
-
+    const editProfile = async () => {
+      try {
+        const response = await fetch('/profile/edit', {
+          method: 'post',
+          body: JSON.stringify(profile),
+          headers: {'Content-Type': 'application/json'}
+        });
+        const data = await response.json()
+        console.log(data);
+        navigate('/profile')
+      } catch (error) {
+        console.log(error)
+      }
     }
     
   return <>
@@ -42,7 +44,8 @@ const EditProfile = () => {
     <Row>
       <Col lg='5' mb='4' ms='6'>
         <h5 className='mb-5 mt-3 text-light'>Preview Profile</h5>
-        <ProfileCard className='preview__card' profile={profile} isInCreation={true} />
+        {isPending && <Loader />}
+        {profile && <ProfileCard className='preview__card' profile={profile} isInCreation={true} />}
       </Col>
       <Col>
         <div className="create__profile">
@@ -53,7 +56,7 @@ const EditProfile = () => {
               </div>
               <div className="form__input w-75">
                 <label>Picture</label>
-                <input type="file" className='upload__input' onChange={() => {onImageChange()}}/>
+                <input type="file" className='upload__input' onChange={onImageChange}/>
               </div>
               <div className="form__input w-75">
                 <label>Proficiency</label>
@@ -81,6 +84,7 @@ const EditProfile = () => {
                     <button type='button' className="btn d-flex align-profiles-center gap-2" onClick={() => {
                       let updatedProfile = profile
                       setProfile(profile => ({...profile, ...updatedProfile}))
+                      window.scrollTo(0, 0)
                     }}>
                         <i className="ri-search-eye-line"></i>
                         Preview

@@ -15,7 +15,7 @@ const handleCategory = (input) => {
   if(input === 'all') {
     setfilteredData(nftData)
   } else {
-    const filteredData = nftData.filter(item => item.category === input)
+    const filteredData = nftData.filter(nft => nft.category === input)
     setfilteredData(filteredData)
   }
 }
@@ -68,8 +68,8 @@ useEffect(() => {
             </div>
           </Col>
           {
-            filteredData.map((item) => (
-              item && <Col key={item._id} lg='3' md='4' sm='6'><NftCard token={token} showLink={true} item={item} /></Col>
+            filteredData.map((nft) => (
+              nft && <Col key={nft._id} lg='3' md='4' sm='6'><NftCard token={token} showLink={true} nft={nft} /></Col>
             ))
           }
         </Row>
