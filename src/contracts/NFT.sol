@@ -3,18 +3,23 @@
 pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract NFT is ERC721URIStorage {
 
-    uint public tokenCount;
+    using Counters for Counters.Counter;
+    Counters.Counter private tokenIdss;
+    address contractAddress;
 
-    constructor() ERC721("MyNFT", "MNFT") {
+    constructor(address marketplaceAddress) ERC721("MyNFT", "MNFT") {
+        contractAddress = marketplaceAddress;
     }
 
     function mint(string memory _tokenURI) external returns (uint) {
-        tokenCount ++;
-        _safeMint(msg.sender, tokenCount);
-        _setTokenURI(tokenCount, _tokenURI);
-        return tokenCount;
+        tokenIdss.increment();
+        _safeMint(msg.sender, tokenIdss.current());
+        _setTokenURI(tokenIdss.current(), _tokenURI);
+        setApprovalForAll(contractAddress, true);
+        return tokenIdss.current();
     }
 }
