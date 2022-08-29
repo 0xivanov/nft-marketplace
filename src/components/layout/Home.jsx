@@ -3,12 +3,12 @@ import Hero from '../ui/Hero'
 import LiveAuction from '../ui/LiveAuction'
 
 
-const Home = () => {
+const Home = ({ provider }) => {
 
   return (
     <>
       <Hero />
-      <LiveAuction />
+      <LiveAuction provider={provider} />
     </>
   )
 }

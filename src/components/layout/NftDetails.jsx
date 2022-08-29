@@ -21,17 +21,20 @@ const NftDetails = ({provider, token}) => {
   
   const [singleNft, setSingleNft] = useState()
   const [showModal, setShowModal] = useState(false)
-  const [isPending, setIsPending] = useState(false)
+  const [isPending, setIsPending] = useState(true)
   const [isLiked, setIsLiked] = useState(false)
   const navigate = useNavigate()
 
 
   useEffect(() => {
     (async () => {
-      const nfts = await getNfts()
-      setSingleNft(nfts.filter(nft => {return nft.tokenId == tokenId})[0])
+      if(provider) {
+        const nfts = await getNfts()
+        setSingleNft(nfts.filter(nft => {return nft.tokenId == tokenId})[0])
+        setIsPending(false)
+      }
     })()
-  }, [])
+  }, [provider])
 
   const loadContracts = async () => {
     const networkId = await provider.getNetwork()
@@ -141,7 +144,7 @@ const NftDetails = ({provider, token}) => {
                   <h6>{singleNft.creator}</h6>
                 </div>
               </div>
-              <p className='my-4'>{singleNft.desc}</p>
+              <p className='my-4'>{singleNft.description}</p>
               <div className="bid__btn d-flex align-items-center justify-content-between">
               <button className="btn d-flex align-items-center gap-2" onClick={() => {
                 if(!token) navigate('/profile')
@@ -157,7 +160,7 @@ const NftDetails = ({provider, token}) => {
         </Row>
       </Container>
     </section>
-    <LiveAuction />
+    <LiveAuction provider={provider} />
   </>
   }
 </>

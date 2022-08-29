@@ -1,4 +1,4 @@
-import React,{ useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Footer from '../footer/Footer'
 import Header from '../header/Header'
 import Routers from '../../routes/Routers'
@@ -20,12 +20,12 @@ const Layout = () => {
       })
     }
     accountChangeListener()
-    if(window.ethereum) {
+    if (window.ethereum) {
       setProvider(new ethers.providers.Web3Provider(window.ethereum))
     } else {
       alert("Please install MetaMask")
     }
-    if(token) {
+    if (token) {
       getProfile().then((p) => {
         setProfile(p)
         setIsProfilePending(false)
@@ -36,8 +36,8 @@ const Layout = () => {
   const getProfile = async () => {
     const response = await fetch('/profile', {
       method: 'post',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({token})
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token })
     });
     let data = await response.json();
     return data
@@ -49,7 +49,7 @@ const Layout = () => {
       const response = await fetch('/profile/create', {
         method: 'post',
         body: JSON.stringify(_token),
-        headers: {'Content-Type': 'application/json'}
+        headers: { 'Content-Type': 'application/json' }
       });
       const data = await response.json()
       console.log(data);
@@ -60,15 +60,15 @@ const Layout = () => {
   }
 
   const connectAccount = async () => {
-    if(window.ethereum) {
+    if (window.ethereum) {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       provider.send("eth_requestAccounts").then((accounts) => {
         handleSubmit(accounts[0])
       })
-      .catch((error) => {
-        alert("metamask connection rejected")
-        console.log(error)
-      })
+        .catch((error) => {
+          alert("metamask connection rejected")
+          console.log(error)
+        })
       setProvider(provider)
     } else {
       alert("install metamask")
@@ -76,7 +76,7 @@ const Layout = () => {
   }
 
   const handleSubmit = async (account) => {
-    const token = await loginUser({account});
+    const token = await loginUser({ account });
     setToken(token.token);
   }
 
@@ -93,15 +93,15 @@ const Layout = () => {
       createProfile(token)
       return token
     })
-   }
+  }
 
   return (
     <>
-        <Header account={token} />
-        <div>
-          <Routers provider={provider} profile={profile} setProfile={setProfile} isProfilePending={isProfilePending} token={token} setToken={setToken} connectAccount={connectAccount} />
-        </div>
-        <Footer/>
+      <Header account={token} />
+      <div>
+        <Routers provider={provider} profile={profile} setProfile={setProfile} isProfilePending={isProfilePending} token={token} setToken={setToken} connectAccount={connectAccount} />
+      </div>
+      <Footer />
     </>
   )
 }

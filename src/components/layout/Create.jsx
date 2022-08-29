@@ -11,10 +11,10 @@ import '../ui/live-auction.css'
 import NFT from '../../abis/NFT.json'
 import NFTMarket from '../../abis/NFTMarket.json'
 
-const Create = ({provider, profile, isPending}) => {
+const Create = ({ provider, profile, isPending }) => {
 
   const navigate = useNavigate()
-  const client = ipfsHttpClient({ host: 'localhost', port: '5001', protocol: 'http'})
+  const client = ipfsHttpClient({ host: 'localhost', port: '5001', protocol: 'http' })
 
   const [nft, setNft] = useState({
     title: "Travel Monkey Club",
@@ -24,13 +24,13 @@ const Create = ({provider, profile, isPending}) => {
     category: 'art',
     expirationDate: new Date(),
     imgIpfsUrl: null,
-    img:null,
+    img: null,
     file: null
   })
 
 
   useEffect(() => {
-    if(profile != null) nft.creator = profile.name
+    if (profile != null) nft.creator = profile.name
   }, [profile])
 
   const onImageChange = async (event) => {
@@ -48,7 +48,7 @@ const Create = ({provider, profile, isPending}) => {
     const networkId = await provider.getNetwork()
     const marketNetworkData = NFTMarket.networks[networkId.chainId]
     const nftNetworkData = NFT.networks[networkId.chainId]
-    if(marketNetworkData && nftNetworkData) {
+    if (marketNetworkData && nftNetworkData) {
       // Assign contract
       const signer = provider.getSigner()
       return [new ethers.Contract(marketNetworkData.address, NFTMarket.abi, signer), new ethers.Contract(nftNetworkData.address, NFT.abi, signer)]
@@ -59,7 +59,7 @@ const Create = ({provider, profile, isPending}) => {
 
   const createItem = async () => {
 
-    const {title, description, currentBid, imgIpfsUrl} = nft
+    const { title, description, currentBid, imgIpfsUrl } = nft
     console.log(imgIpfsUrl)
     const data = JSON.stringify({
       title, description, image: imgIpfsUrl
@@ -71,7 +71,7 @@ const Create = ({provider, profile, isPending}) => {
 
       const [marketContract, nftContract] = await loadContracts()
 
-      let transaction = await nftContract.mint(url) 
+      let transaction = await nftContract.mint(url)
       let tx = await transaction.wait()
 
       let event = tx.events[0]
@@ -80,8 +80,8 @@ const Create = ({provider, profile, isPending}) => {
       const price = ethers.utils.parseUnits(currentBid.toString(), 'ether')
       let listingPrice = await marketContract.getListingPrice()
       listingPrice = listingPrice.toString()
-      
-      transaction = await marketContract.createMarketItem(nftContract.address, tokenId, price, {value: listingPrice})
+
+      transaction = await marketContract.createMarketItem(nftContract.address, tokenId, price, { value: listingPrice })
       await transaction.wait()
     } catch (e) {
       console.log(e)
@@ -91,7 +91,7 @@ const Create = ({provider, profile, isPending}) => {
       const response = await fetch('/create', {
         method: 'post',
         body: JSON.stringify(nft),
-        headers: {'Content-Type': 'application/json'}
+        headers: { 'Content-Type': 'application/json' }
       });
       const data = await response.json()
       console.log(data);
@@ -102,93 +102,93 @@ const Create = ({provider, profile, isPending}) => {
   }
 
   return <>
-  {isPending && <>
-    <CommonSection title='Create nft' />
-    <Loader />
-  </>}
-  {!isPending && <>
-  <CommonSection title='Create nft' />
-  <section>
-    <Container>
-      <Row>
-        <Col lg='4' mb='4' ms='6'>
-          <h5 className='mb-4 text-light'>Preview nft</h5>
-          <NftCard className='preview__card' nft={nft} isInCreation={true} />
-        </Col>
-        <Col>
-          <div className="create__nft">
-              <form action="">
-                <div className="form__input w-50">
-                  <label>Title</label>
-                  <input type="text" placeholder='Title' className='upload__input' onChange={input => nft.title = input.target.value}/>
-                </div>
-
-                <div className="form__input w-50">
-                  <label>Category</label>
-                  <select className='w-100' onChange={input => nft.category = input.target.value}>
-                    <option value="art">Art</option>
-                    <option value="music">Music</option>
-                    <option value="collectable">Collectable</option>
-                    <option value="domain">Domain</option>
-                  </select>
-                </div>
-
-                <div className="form__input w-50">
-                  <label>Description</label>
-                  <textarea name='' id=''  cols='30' rows='10' placeholder='Enter description' className='w-100' onChange={input => nft.desc = input.target.value}/>
-                </div>
-
-                <div className="form__input w-50">
-                  <label>Upload File</label>
-                  <input type="file" className='upload__input' onChange={onImageChange}/>
-                </div>
-
-                <div className="form__input w-50">
-                  <label>Minimum Bid</label>
-                  <input type="number" placeholder='Enter minimum bid' className='upload__input' onChange={input => nft.currentBid = input.target.value}/>
-                </div>
-
-                <div className="d-flex align-nfts-center justify-content-between">
+    {isPending && <>
+      <CommonSection title='Create nft' />
+      <Loader />
+    </>}
+    {!isPending && <>
+      <CommonSection title='Create nft' />
+      <section>
+        <Container>
+          <Row>
+            <Col lg='4' mb='4' ms='6'>
+              <h5 className='mb-4 text-light'>Preview nft</h5>
+              <NftCard className='preview__card' nft={nft} isInCreation={true} />
+            </Col>
+            <Col>
+              <div className="create__nft">
+                <form action="">
                   <div className="form__input w-50">
-                    <label>Expiration Date</label>
-                    <input type="date" className='upload__input' onKeyDown={(e) => e.preventDefault()} min={new Date().toLocaleDateString('en-ca')} max={new Date(Date.now() + 10 * 86400000).toLocaleDateString('en-ca')} onChange={input => nft.expirationDate = new Date(input.target.value)}/>
+                    <label>Title</label>
+                    <input type="text" placeholder='Title' className='upload__input' onChange={input => nft.title = input.target.value} />
                   </div>
-                </div>
 
-                <div className="form__input w-50 d-flex align-nfts-center justify-content-between">
-                  <div className="bid__btn">
-                    <button type='button' className="btn d-flex align-nfts-center gap-2" onClick={async () => {
-                      nft.creator = profile.name
-                      try {
-                        const result = await client.add(nft.file)
-                        nft.imgIpfsUrl = `http://localhost:8080/ipfs/${result.cid.toV1().toString()}`
-                      } catch (e) {
-                        console.log(e)
-                      }
-                      let updatednft = nft
-                      setNft(nft => ({...nft, ...updatednft}))
-                      window.scrollTo(0, 0)
-                    }}>
+                  <div className="form__input w-50">
+                    <label>Category</label>
+                    <select className='w-100' onChange={input => nft.category = input.target.value}>
+                      <option value="art">Art</option>
+                      <option value="music">Music</option>
+                      <option value="collectable">Collectable</option>
+                      <option value="domain">Domain</option>
+                    </select>
+                  </div>
+
+                  <div className="form__input w-50">
+                    <label>Description</label>
+                    <textarea name='' id='' cols='30' rows='10' placeholder='Enter description' className='w-100' onChange={input => nft.desc = input.target.value} />
+                  </div>
+
+                  <div className="form__input w-50">
+                    <label>Upload File</label>
+                    <input type="file" className='upload__input' onChange={onImageChange} />
+                  </div>
+
+                  <div className="form__input w-50">
+                    <label>Minimum Bid</label>
+                    <input type="number" placeholder='Enter minimum bid' className='upload__input' onChange={input => nft.currentBid = input.target.value} />
+                  </div>
+
+                  <div className="d-flex align-nfts-center justify-content-between">
+                    <div className="form__input w-50">
+                      <label>Expiration Date</label>
+                      <input type="date" className='upload__input' onKeyDown={(e) => e.preventDefault()} min={new Date().toLocaleDateString('en-ca')} max={new Date(Date.now() + 10 * 86400000).toLocaleDateString('en-ca')} onChange={input => nft.expirationDate = new Date(input.target.value)} />
+                    </div>
+                  </div>
+
+                  <div className="form__input w-50 d-flex align-nfts-center justify-content-between">
+                    <div className="bid__btn">
+                      <button type='button' className="btn d-flex align-nfts-center gap-2" onClick={async () => {
+                        nft.creator = profile.name
+                        try {
+                          const result = await client.add(nft.file)
+                          nft.imgIpfsUrl = `http://localhost:8080/ipfs/${result.cid.toV1().toString()}`
+                        } catch (e) {
+                          console.log(e)
+                        }
+                        let updatednft = nft
+                        setNft(nft => ({ ...nft, ...updatednft }))
+                        window.scrollTo(0, 0)
+                      }}>
                         <i className="ri-search-eye-line"></i>
                         Preview
-                    </button>
-                  </div>
-                  <div className="bid__btn">
-                    <button type='button' className="btn d-flex align-nfts-center gap-2" onClick={() => {
-                      createItem()
-                    }}>
+                      </button>
+                    </div>
+                    <div className="bid__btn">
+                      <button type='button' className="btn d-flex align-nfts-center gap-2" onClick={() => {
+                        createItem()
+                      }}>
                         <i className="ri-building-3-line"></i>
                         Create
-                    </button>
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </form>
-          </div>
-        </Col>
-      </Row>
-    </Container>
-  </section>
-  </>}
+                </form>
+              </div>
+            </Col>
+          </Row>
+        </Container>
+      </section>
+    </>}
 
   </>
 }
