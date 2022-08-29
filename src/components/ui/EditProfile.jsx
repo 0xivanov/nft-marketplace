@@ -7,7 +7,8 @@ import Loader from './Loader'
 import './edit-profile.css'
 
 
-const EditProfile = ({profile, setProfile, isPending, token}) => {
+const EditProfile = ({profile, setProfile, isPending}) => {
+
 
   const navigate = useNavigate()
 
@@ -31,8 +32,7 @@ const EditProfile = ({profile, setProfile, isPending, token}) => {
           headers: {'Content-Type': 'application/json'}
         });
         const data = await response.json()
-        console.log(data);
-        navigate('/profile')
+        navigate('/profile', { replace: true })
       } catch (error) {
         console.log(error)
       }

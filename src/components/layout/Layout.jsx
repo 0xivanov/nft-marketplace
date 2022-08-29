@@ -3,21 +3,31 @@ import Footer from '../footer/Footer'
 import Header from '../header/Header'
 import Routers from '../../routes/Routers'
 import { ethers } from 'ethers'
-import Profile from './Profile'
 import useToken from '../../useToken';
 
 const Layout = () => {
 
-  const { token, setToken } = useToken();
-  const [provider, setProvider] = useState(new ethers.providers.Web3Provider(window.ethereum))
-  const [profile, setProfile] = useState()
+  const { token, setToken } = useToken()
+  const [provider, setProvider] = useState()
+  const [profile, setProfile] = useState(null)
   const [isProfilePending, setIsProfilePending] = useState(true)
 
   useEffect(() => {
+    const accountChangeListener = () => {
+      window.ethereum.on("accountsChanged", (accounts) => {
+        setToken(accounts[0])
+        window.location.reload()
+      })
+    }
+    accountChangeListener()
+    if(window.ethereum) {
+      setProvider(new ethers.providers.Web3Provider(window.ethereum))
+    } else {
+      alert("Please install MetaMask")
+    }
     if(token) {
-      getProfile().then((profile) => {
-        console.log(profile)
-        setProfile(profile)
+      getProfile().then((p) => {
+        setProfile(p)
         setIsProfilePending(false)
       })
     }
@@ -29,47 +39,21 @@ const Layout = () => {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({token})
     });
-  
     let data = await response.json();
     return data
   }
 
-  useEffect(() => {
-    console.log(provider)
-    const accountChangeListener = () => {
-      window.ethereum.on("accountsChanged", (accounts) => {
-        setToken(accounts[0])
-      })
-    }
-
-    accountChangeListener()
-  }, [])
-
   const createProfile = async (token) => {
     const _token = await token
-    const profile = {
-      pubkey: _token.token,
-      name: "Marie Horwitz",
-      proficiency: "Web Designer",
-      email: "info@gmail.com",
-      facebook: "#",
-      instagram: "#",
-      twitter: "#",
-      img: null,
-      imgFormat: null,
-      imgUrl: null,
-      likedNfts: null
-    }
-
-
     try {
       const response = await fetch('/profile/create', {
         method: 'post',
-        body: JSON.stringify(profile),
+        body: JSON.stringify(_token),
         headers: {'Content-Type': 'application/json'}
       });
       const data = await response.json()
       console.log(data);
+      setProfile(data)
     } catch (error) {
       console.log(error)
     }
@@ -115,7 +99,7 @@ const Layout = () => {
     <>
         <Header account={token} />
         <div>
-          <Routers profile={profile} setProfile={setProfile} isProfilePending={isProfilePending} token={token} setToken={setToken} connectAccount={connectAccount} />
+          <Routers provider={provider} profile={profile} setProfile={setProfile} isProfilePending={isProfilePending} token={token} setToken={setToken} connectAccount={connectAccount} />
         </div>
         <Footer/>
     </>

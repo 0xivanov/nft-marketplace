@@ -4,9 +4,9 @@ import { Container, Row, Col } from 'reactstrap'
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import '../../style/profile.css'
-import metamask from '../../img/metamask.svg'
-import phantom from '../../img/phantom.svg'
-import coinbase from '../../img/coinbase.webp'
+import metamask from '../../public/img/metamask.svg'
+import phantom from '../../public/img/phantom.svg'
+import coinbase from '../../public/img/coinbase.webp'
 import ProfileCard from '../ui/ProfileCard';
 import Loader from '../ui/Loader';
 import NftCard from '../ui/NftCard';
@@ -89,7 +89,7 @@ const Profile = ({profile, isPending, token, connectAccount}) => {
         {isNftPending && <Loader />}
         {
           nftData && profile && nftData.filter(nft => nft.owner == profile._id).map((nft) => (
-            nft && <Col key={nft._id} lg='3' md='4' sm='6'><NftCard token={token} showLink={true} nft={nft} /></Col>
+            nft && <Col key={nft.tokenId} lg='3' md='4' sm='6'><NftCard token={token} showLink={true} nft={nft} /></Col>
           ))
         }
       </Row>

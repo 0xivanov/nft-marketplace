@@ -7,36 +7,83 @@ import LiveAuction from '../ui/LiveAuction'
 import '../ui/live-auction.css'
 import Modal from '../ui/Modal'
 import Loader from '../ui/Loader'
+import NFT from '../../abis/NFT.json'
+import NFTMarket from '../../abis/NFTMarket.json'
+import axios from 'axios'
+import { ethers } from "ethers"
 
-const NftDetails = ({token}) => {
+const NftDetails = ({provider, token}) => {
   
-  const { _id } = useParams()
+  const { tokenId } = useParams()
 
   const likeRef = useRef(null);
   const toggleLike = () => likeRef.current.classList.toggle('liked')
   
   const [singleNft, setSingleNft] = useState()
   const [showModal, setShowModal] = useState(false)
-  const [isPending, setIsPending] = useState(true)
+  const [isPending, setIsPending] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
-  const [_img, _setImg] = useState()
   const navigate = useNavigate()
 
+
+  useEffect(() => {
+    (async () => {
+      const nfts = await getNfts()
+      setSingleNft(nfts.filter(nft => {return nft.tokenId == tokenId})[0])
+    })()
+  }, [])
+
+  const loadContracts = async () => {
+    const networkId = await provider.getNetwork()
+    const marketNetworkData = NFTMarket.networks[networkId.chainId]
+    const nftNetworkData = NFT.networks[networkId.chainId]
+    if(marketNetworkData && nftNetworkData) {
+      // Assign contract
+      const signer = provider.getSigner()
+      return [new ethers.Contract(marketNetworkData.address, NFTMarket.abi, signer), new ethers.Contract(nftNetworkData.address, NFT.abi, signer)]
+    } else {
+      window.alert('NFTMarket contract not deployed to detected network.')
+    }
+  }  
+
   const getNfts = async () => {
+    const [marketContract, nftContract] = await loadContracts()
+    let nfts = await marketContract.fetchMarketItems()
+  
     const response = await fetch('/market', {
       method: 'get',
       headers: {'Content-Type': 'application/json'}
     });
-  
     let data = await response.json();
-    return data
+    let index = 0
+    nfts = await Promise.all(nfts.map( async (nft) => {
+      let tokenURI = await nftContract.tokenURI(nft.tokenId)
+      const meta = await axios.get(tokenURI)
+      let price = ethers.utils.formatUnits(nft.price, 'ether')
+      let {creator, currentBid, category, expirationDate} = data[index]
+      index ++
+      return {
+        creator,
+        category,
+        expirationDate,
+        currentBid,
+        tokenId: nft.tokenId.toNumber(),
+        price,
+        seller: nft.seller,
+        owner: nft.owner,
+        image: meta.data.image,
+        title: meta.data.title,
+        description: meta.data.description
+      }
+    }))
+    return nfts
   }
 
   const like = async () => {
     try {
       var updatedItem = singleNft
       if(isLiked) {
-        await fetch(`/market/${encodeURIComponent(_id)}`, {
+        await fetch(`/market/${encodeURIComponent(tokenId)}`, {
           method: 'post',
           body: JSON.stringify({isLiked: true}),
           headers: {'Content-Type': 'application/json'}
@@ -45,7 +92,7 @@ const NftDetails = ({token}) => {
         updatedItem.likes--
         setSingleNft(item => ({...item, ...updatedItem}))
       } else {
-        await fetch(`/market/${encodeURIComponent(_id)}`, {
+        await fetch(`/market/${encodeURIComponent(tokenId)}`, {
           method: 'post',
           body: JSON.stringify({isLiked: false}),
           headers: {'Content-Type': 'application/json'}
@@ -60,22 +107,6 @@ const NftDetails = ({token}) => {
     }
   }
 
-  useEffect(() => {
-    getNfts().then((nfts) => {
-      let nft = nfts.find(nft => nft._id === _id)
-      setSingleNft(nft)
-      
-      if(nft.img === null) return
-      var base64String = btoa(
-          new Uint8Array(nft.img.data)
-            .reduce((data, byte) => data + String.fromCharCode(byte), '')
-        );
-      _setImg(base64String)
-      setIsPending(false)
-    })
-  }, [])
-
-
   return <>
   {isPending && <>
     <CommonSeciton />
@@ -89,7 +120,7 @@ const NftDetails = ({token}) => {
       <Container>
         <Row>
           <Col lg='6' md='6' sm='6'>
-            <img src={`data:${singleNft.imgFormat};base64,${_img}`} alt="" className='w-100 single__nft-img' />
+            <img src={singleNft.image} alt="" className='w-100 single__nft-img' />
           </Col>
           <Col lg='6'>
             <div className="single__nft__content">

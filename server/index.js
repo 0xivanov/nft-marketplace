@@ -16,19 +16,13 @@ const port = 3001
 
 
 app.use('/login', (req, res) => {
-  console.log(req.body)
     res.send({
       token: req.body.account
     });
   });
 
-app.post('/create', (req, resp) => {
-  let ownerId = req.body.ownerId
-  let nft = req.body.nft  
-  console.log(ownerId)
-  console.log(nft)
-  console.log(req.body)
-    db.createNft(nft, ownerId)
+app.post('/create', async (req, resp) => {
+    db.createNft(req.body)
     resp.send(req.body)
 })
 
@@ -47,13 +41,11 @@ app.post('/profile/create', async (req, resp) => {
 })
 
 app.post('/profile', async (req, resp) => {
-  console.log(req.body)
   let result = await db.getProfile(req.body)
   resp.send(result)
 })
 
 app.post('/profile/edit', async (req, resp) => {
-  console.log(req.body)
   let profile = req.body
   let _id = profile._id
   let result = await db.editProfile(profile, _id)

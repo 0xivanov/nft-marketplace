@@ -2,7 +2,7 @@ import React from 'react'
 import {Container, Row, Col} from 'reactstrap'
 import {Link} from 'react-router-dom'
 import './hero.css'
-import heroImg from '../../img/hero.jpg'
+import heroImg from '../../public/img/hero.jpg'
 
 const Hero = () => {
   return (

@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 const { ethers, providers } = require('ethers');
-const { matchRoutes } = require('react-router-dom');
+const { resolve } = require('path-browserify');
 const NFTMarket = artifacts.require('./NFTMarket');
 const NFT = artifacts.require('NFT');
 
@@ -25,12 +25,22 @@ contract('NFTMarket', (accounts) => {
         await marketInstance.createMarketItem(nftInstance.address, 4, auctionPrice, {value: listingPrice})
 
 
-        //const [_, buyerAddress] = accounts
+        const [_, buyerAddress] = accounts
         
-        //await marketInstance.createMarketSale(nftInstance.address, 1, {value: auctionPrice, from: buyerAddress})
+        await marketInstance.createMarketSale(nftInstance.address, 1, {value: auctionPrice, from: buyerAddress})
 
-        const items = await marketInstance.fetchMarketItems()
+        let items = await marketInstance.fetchMarketItems()
 
-        console.log("items: ", items)
+        items = await Promise.all(items.map( async (item) => {
+            const tokenURI = await nftInstance.tokenURI(item.tokenId)
+            return {
+                price: item.price,
+                tokenId: item.tokenId,
+                seller: item.seller,
+                owner: item.owner,
+                tokenURI
+            }
+        }))
+        console.log(items)
     })
 })

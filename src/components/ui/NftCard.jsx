@@ -5,10 +5,10 @@ import Modal from './Modal'
 
 const NftCard = (props) => {
 
-    const {title, _id, currentBid, expirationDate, img, imgUrl, imgFormat, creator} = props.nft
+    const {tokenId, title, currentBid, expirationDate, image, imgUrl, creator} = props.nft
     const [showModal, setShowModal] = useState(false)
     const [_img, _setImg] = useState()
-    const [isPending, setIsPending] = useState(true)
+    const [isPending, setIsPending] = useState(false)
     const navigate = useNavigate()
 
     const timeLeft = (strDate) => {  
@@ -17,27 +17,16 @@ const NftCard = (props) => {
         return Math.round((dt - now) / 36e5);
     }  
 
-    useEffect(() => {
-        if(title === 'Travel Monkey Club') setIsPending(false)
-        if(img === null) return
-        var base64String = btoa(
-            new Uint8Array(img.data)
-              .reduce((data, byte) => data + String.fromCharCode(byte), '')
-          );
-        _setImg(base64String)
-        setIsPending(false)
-    }, [])
-
   return <>
   {isPending && <div>Loading</div>}
   {!isPending && <div className="single__nft__card">
     <div className="nft__img">
         {!props.showLink && <img src={imgUrl} alt="" className='w-100' />}
-        {props.showLink && <img src={`data:${imgFormat};base64,${_img}`} alt="" className='w-100' />}
+        {props.showLink && <img src={image} alt="" className='w-100' />}
     </div>
     <div className="nft__content">
         <h5 className="nft__title">
-            {props.showLink && <Link to={`/market/${_id}`}>{title}</Link>}
+            {props.showLink && <Link to={`/market/${tokenId}`}>{title}</Link>}
             {!props.showLink && <div>{title}</div>}
             </h5>
         <div className="creator__info__wrapper d-flex gap-3">

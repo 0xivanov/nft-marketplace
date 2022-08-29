@@ -6,21 +6,29 @@ import Loader from './Loader';
 
 const ProfileCard = (props) => {
     
-    const {_id, name, proficiency, email, facebook, instagram, twitter, img, imgUrl, imgFormat} = props.profile
+    const {name, proficiency, email, facebook, instagram, twitter, img, imgUrl, imgFormat} = props.profile
     const navigate = useNavigate()
     const [_img, _setImg] = useState()
     const [isPending, setIsPending] = useState(true)
 
     useEffect(() => {
-        console.log(props.profile)
         if(name === 'Marie Horwitz') setIsPending(false)
         if(img === null) return
-        var base64String = btoa(
+        if(img.data === undefined) {
+          var base64String = btoa(
+            new Uint8Array(img)
+              .reduce((data, byte) => data + String.fromCharCode(byte), '')
+          )
+          _setImg(base64String)
+          setIsPending(false)
+        } else {
+          var base64String = btoa(
             new Uint8Array(img.data)
               .reduce((data, byte) => data + String.fromCharCode(byte), '')
-          );
+          )
         _setImg(base64String)
         setIsPending(false)
+        }
     }, [])
   return <>
     {isPending && <Loader />}
@@ -31,18 +39,18 @@ const ProfileCard = (props) => {
               <MDBRow className="g-0">
                 <MDBCol md="4" className="gradient-custom text-center text-white"
                   style={{ borderTopLeftRadius: '.5rem', borderBottomLeftRadius: '.5rem' }}>
-                  
-                  {props.isInCreation && <MDBCardImage src={imgUrl} alt="Avatar" onError={({currentTarget}) => {
+                  {props.isInCreation && !imgUrl && <MDBCardImage src={`data:${imgFormat};base64,${_img}`} alt="Avatar"  className="my-3 avatar" fluid />}
+                  {props.isInCreation && imgUrl && <MDBCardImage src={imgUrl} alt="Avatar" onError={({currentTarget}) => {
                         currentTarget.onerror = null // prevents looping
                         currentTarget.src=`data:${imgFormat};base64,${_img}`
                   }} className="my-3 avatar" fluid />}
-                  {!props.isInCreation && <MDBCardImage src={`data:${imgFormat};base64,${_img}`} alt="Avatar" className="my-3 avatar" fluid />}
-                {!props.isInCreation && <div className="edit__profile">
+                  {!props.isInCreation && <MDBCardImage src={`data:${imgFormat};base64,${_img}`} alt="Avatar"  className="my-3 avatar" fluid />}
+                  {!props.isInCreation && <div className="edit__profile">
                     <button className="btn " disabled={props.isInCreation} onClick={() => {navigate("/profile/edit")}}>
                         <i className="ri-edit-2-line"></i>
                         Edit
                     </button>
-                </div>}
+                  </div>}
                   <MDBTypography tag="h5">{name}</MDBTypography>
                   <MDBCardText>{proficiency}</MDBCardText>
                 </MDBCol>
