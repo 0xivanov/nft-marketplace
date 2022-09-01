@@ -19,7 +19,7 @@ const Routers = ({ provider, profile, setProfile, isProfilePending, token, setTo
       <Route path="/market" element={<Market provider={provider} profile={profile} isPending={isProfilePending} token={token} />} />
       {token && <Route path="/create" element={<Create provider={provider} profile={profile} isPending={isProfilePending} token={token} />} />}
       {!token && <Route path="/create" element={<Navigate to="/profile" />} />}
-      <Route path="/profile" element={<Profile profile={profile} isPending={isProfilePending} token={token} setToken={setToken} connectAccount={connectAccount} />} />
+      <Route path="/profile" element={<Profile provider={provider} profile={profile} isPending={isProfilePending} token={token} setToken={setToken} connectAccount={connectAccount} />} />
       {!token && <Route path="/profile/edit" element={<Navigate to="/profile" />} />}
       {token && <Route path="/profile/edit" element={<EditProfile profile={profile} setProfile={setProfile} isPending={isProfilePending} token={token} />} />}
       <Route path="/market/:tokenId" element={<NftDetails provider={provider} profile={profile} isPending={isProfilePending} token={token} />} />

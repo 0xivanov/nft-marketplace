@@ -10,29 +10,76 @@ import coinbase from '../../public/img/coinbase.webp'
 import ProfileCard from '../ui/ProfileCard';
 import Loader from '../ui/Loader';
 import NftCard from '../ui/NftCard';
+import { ethers } from "ethers"
+import axios from 'axios'
+import NFT from '../../abis/NFT.json'
+import NFTMarket from '../../abis/NFTMarket.json'
 
-const Profile = ({ profile, isPending, token, connectAccount }) => {
+const Profile = ({ provider, profile, isPending, token, connectAccount }) => {
 
 
   const [nftData, setnftData] = useState(null)
-  const [isNftPending, setIsNftPending] = useState(true)
+  const [isDataPending, setIsDataPending] = useState(true)
+
+  const loadContracts = async () => {
+    const networkId = await provider.getNetwork()
+    const marketNetworkData = NFTMarket.networks[networkId.chainId]
+    const nftNetworkData = NFT.networks[networkId.chainId]
+    if (marketNetworkData && nftNetworkData) {
+      // Assign contract
+      const signer = provider.getSigner()
+      return [new ethers.Contract(marketNetworkData.address, NFTMarket.abi, signer), new ethers.Contract(nftNetworkData.address, NFT.abi, signer)]
+    } else {
+      window.alert('NFTMarket contract not deployed to detected network.')
+    }
+  }
 
   const getNfts = async () => {
+    const [marketContract, nftContract] = await loadContracts()
+    let nfts = await marketContract.fetchMyNFTs()
+
     const response = await fetch('/market', {
       method: 'get',
       headers: { 'Content-Type': 'application/json' }
     });
-
     let data = await response.json();
-    return data
+    let index = 0
+    nfts = await Promise.all(nfts.map(async (nft) => {
+      let tokenURI = await nftContract.tokenURI(nft.tokenId)
+      console.log(tokenURI)
+      const meta = await axios.get(tokenURI)
+      let price = ethers.utils.formatUnits(nft.price, 'ether')
+      let { creator, currentBid, category, expirationDate } = data[index]
+      index++
+      return {
+        creator,
+        category,
+        expirationDate,
+        currentBid,
+        tokenId: nft.tokenId.toNumber(),
+        price,
+        seller: nft.seller,
+        owner: nft.owner,
+        image: meta.data.image,
+        title: meta.data.title,
+        description: meta.data.description
+      }
+    }))
+
+    console.log(nfts)
+    return nfts
   }
 
   useEffect(() => {
-    getNfts().then((nfts) => {
-      setnftData(nfts)
-      setIsNftPending(false)
-    })
-  }, [])
+    (async () => {
+      console.log(provider)
+      if (provider) {
+        const nfts = await getNfts()
+        setnftData(nfts)
+        setIsDataPending(false)
+      }
+    })()
+  }, [provider])
 
   return <>
     {!token && <><CommonSection title='Profile' />
@@ -86,9 +133,9 @@ const Profile = ({ profile, isPending, token, connectAccount }) => {
                 <span><Link to='/market'>Explore more</Link></span>
               </div>
             </Col>
-            {isNftPending && <Loader />}
+            {isDataPending && <Loader />}
             {
-              nftData && profile && nftData.filter(nft => nft.owner == profile._id).map((nft) => (
+              nftData && profile && nftData.map((nft) => (
                 nft && <Col key={nft.tokenId} lg='3' md='4' sm='6'><NftCard token={token} showLink={true} nft={nft} /></Col>
               ))
             }

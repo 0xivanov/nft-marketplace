@@ -1,7 +1,12 @@
 import React from 'react'
+import { useState } from 'react'
+import { useEffect } from 'react'
 import './modal.css'
 
-const Modal = ({ setShowModal }) => {
+const Modal = ({balance, profile, nft, buyNft, setShowModal }) => {
+
+  
+
   return (
     <div className="modal__wrapper">
       <div className="single__modal">
@@ -9,10 +14,10 @@ const Modal = ({ setShowModal }) => {
           <i className="ri-close-circle-line" onClick={() => { setShowModal(false) }}></i>
         </span>
         <h6 className='text-center text-light'>Place Bid</h6>
-        <p className='text-center text-light'> You must bid at least <span className='money'>5 ETH</span></p>
+        <p className='text-center text-light'> You must bid at least <span className='money'>{nft.price} ETH</span></p>
 
         <div className="input__item mb-3">
-          <h6>Enter Quantity, 3 available</h6>
+          <h6>Enter Quantity, {balance} available</h6>
           <input type="number" placeholder='Enter quantity' />
         </div>
 
@@ -32,7 +37,7 @@ const Modal = ({ setShowModal }) => {
         </div>
 
         <div>
-          <button className="place__bid-btn">Place Bid</button>
+          <button onClick={() => { buyNft(nft) }} className="place__bid-btn">Place Bid</button>
         </div>
       </div>
     </div>

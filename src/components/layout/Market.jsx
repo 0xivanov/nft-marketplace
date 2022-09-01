@@ -9,12 +9,12 @@ import axios from 'axios'
 import NFT from '../../abis/NFT.json'
 import NFTMarket from '../../abis/NFTMarket.json'
 
-const Market = ({ provider, token }) => {
+const Market = ({profile, isPending, provider, token }) => {
 
   const [nftData, setnftData] = useState(null)
   const [filteredData, setfilteredData] = useState(null)
-  const [isPending, setIsPending] = useState(true)
-
+  const [isDataPending, setIsDataPending] = useState(true)
+  const [balance, setBalance] = useState(0)
 
   const handleCategory = (input) => {
     if (input === 'all') {
@@ -76,7 +76,7 @@ const Market = ({ provider, token }) => {
 
   const buyNft = async (nft) => {
     const [marketContract, nftContract] = await loadContracts()
-    let price = ethers.utils.formatUnits(nft.price, 'ether')
+    let price = ethers.utils.parseUnits(nft.price, 'ether')
     const transaction = await marketContract.createMarketSale(nftContract.address, nft.tokenId, { value: price })
     await transaction.wait()
     getNfts()
@@ -88,13 +88,24 @@ const Market = ({ provider, token }) => {
         const nfts = await getNfts()
         setnftData(nfts)
         setfilteredData(nfts)
-        setIsPending(false)
+        setIsDataPending(false)
       }
     })()
   }, [provider])
 
+  useEffect(() => {
+    (async () => {
+      if (profile) {
+        const balance = await provider.getBalance(profile.pubkey)
+        const balanceInEther = ethers.utils.formatUnits(balance, 'ether')
+        setBalance(balanceInEther)
+      }
+    })()
+  }, [[profile]])
+
+
   return <>
-    {isPending && <>
+    {isPending && isDataPending && <>
       <CommonSection title={'MarketPlace'} />
       <section className='main__section'>
         <Container>
@@ -124,7 +135,7 @@ const Market = ({ provider, token }) => {
             </Col>
             {
               filteredData.map((nft) => (
-                nft && <Col key={nft.tokenId} lg='3' md='4' sm='6'><NftCard token={token} showLink={true} nft={nft} /></Col>
+                nft && <Col key={nft.tokenId} lg='3' md='4' sm='6'><NftCard balance={balance} profile={profile} buyNft={buyNft} token={token} showLink={true} nft={nft} /></Col>
               ))
             }
           </Row>

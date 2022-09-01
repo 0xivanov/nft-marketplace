@@ -80,7 +80,6 @@ const Create = ({ provider, profile, isPending }) => {
       const price = ethers.utils.parseUnits(currentBid.toString(), 'ether')
       let listingPrice = await marketContract.getListingPrice()
       listingPrice = listingPrice.toString()
-
       transaction = await marketContract.createMarketItem(nftContract.address, tokenId, price, { value: listingPrice })
       await transaction.wait()
     } catch (e) {

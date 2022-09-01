@@ -54,7 +54,7 @@ const NftCard = (props) => {
             Place Bid
           </button>
 
-          {showModal && <Modal setShowModal={setShowModal} />}
+          {showModal && <Modal balance={props.balance} profile={props.profile} buyNft={props.buyNft} nft={props.nft} setShowModal={setShowModal} />}
         </div>
       </div>
     </div>}

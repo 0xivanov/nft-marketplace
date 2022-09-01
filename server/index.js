@@ -52,7 +52,7 @@ app.post('/profile/edit', async (req, resp) => {
   resp.send(result)
 })
 
-app.listen(port, () => {
+app.listen(port, () => { 
     
     console.log(`Server is listening on port ${port}`);
 })
