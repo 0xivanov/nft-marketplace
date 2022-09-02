@@ -24,3 +24,6 @@ yarn-error.log*
 
 #machine-specific
 /src/abis
+
+#build
+/server-build

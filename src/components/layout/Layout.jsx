@@ -13,6 +13,10 @@ const Layout = () => {
   const [isProfilePending, setIsProfilePending] = useState(true)
 
   useEffect(() => {
+    if(!window.ethereum) {
+      alert("Please install MetaMask")
+      return
+    }
     const accountChangeListener = () => {
       window.ethereum.on("accountsChanged", (accounts) => {
         setToken(accounts[0])
@@ -20,11 +24,7 @@ const Layout = () => {
       })
     }
     accountChangeListener()
-    if (window.ethereum) {
-      setProvider(new ethers.providers.Web3Provider(window.ethereum))
-    } else {
-      alert("Please install MetaMask")
-    }
+    setProvider(new ethers.providers.Web3Provider(window.ethereum))
     if (token) {
       getProfile().then((p) => {
         setProfile(p)
@@ -71,7 +71,7 @@ const Layout = () => {
         })
       setProvider(provider)
     } else {
-      alert("install metamask")
+      alert("Please install metamask")
     }
   }
 
