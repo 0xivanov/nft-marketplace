@@ -5,10 +5,11 @@ import { Link } from 'react-router-dom'
 import './live-auction.css'
 import NftCard from './NftCard'
 import Loader from './Loader'
-import NFT from '../../abis/NFT.json'
-import NFTMarket from '../../abis/NFTMarket.json'
 import axios from 'axios'
 import { ethers } from "ethers"
+import NFT from '../../abis/NFT.json'
+import Auction from '../../abis/Auction.json'
+import AuctionFactory from '../../abis/AuctionFactory.json'
 
 const LiveAuction = ({ provider }) => {
 
@@ -28,20 +29,22 @@ const LiveAuction = ({ provider }) => {
 
   const loadContracts = async () => {
     const networkId = await provider.getNetwork()
-    const marketNetworkData = NFTMarket.networks[networkId.chainId]
+    console.log(networkId)
+    const auctionNetworkData = Auction.networks[networkId.chainId]
+    const auctionFactoryData = AuctionFactory.networks[networkId.chainId]
     const nftNetworkData = NFT.networks[networkId.chainId]
-    if (marketNetworkData && nftNetworkData) {
-      // Assign contract
+    if (auctionNetworkData && nftNetworkData && auctionFactoryData) {
       const signer = provider.getSigner()
-      return [new ethers.Contract(marketNetworkData.address, NFTMarket.abi, signer), new ethers.Contract(nftNetworkData.address, NFT.abi, signer)]
+      return [new ethers.Contract(auctionNetworkData.address, Auction.abi, signer),
+      new ethers.Contract(nftNetworkData.address, NFT.abi, signer),
+      new ethers.Contract(auctionFactoryData.address, AuctionFactory.abi, signer)]
     } else {
-      window.alert('NFTMarket contract not deployed to detected network.')
+      window.alert('contracts not deployed to detected network.')
     }
   }
 
   const getNfts = async () => {
-    const [marketContract, nftContract] = await loadContracts()
-    let nfts = await marketContract.fetchMarketItems()
+    const [auctionContract, nftContract, auctionFactoryContract] = await loadContracts()
 
     const response = await fetch('/market', {
       method: 'get',
@@ -49,26 +52,43 @@ const LiveAuction = ({ provider }) => {
     });
     let data = await response.json();
     let index = 0
-    nfts = await Promise.all(nfts.map(async (nft) => {
-      let tokenURI = await nftContract.tokenURI(nft.tokenId)
-      const meta = await axios.get(tokenURI)
-      let price = ethers.utils.formatUnits(nft.price, 'ether')
-      let { creator, currentBid, category, expirationDate } = data[index]
-      index++
-      return {
-        creator,
-        category,
-        expirationDate,
-        currentBid,
-        tokenId: nft.tokenId.toNumber(),
-        price,
-        seller: nft.seller,
-        owner: nft.owner,
-        image: meta.data.image,
-        title: meta.data.title,
-        description: meta.data.description
+
+    let nfts = []
+    let addresses = await auctionFactoryContract.getSellerAddresses();
+    let uniqueAddresses = [...new Set(addresses)];
+    for (const address of uniqueAddresses) {
+      let clones = await auctionFactoryContract.getAuctions(address)
+      console.log(address, clones)
+      for (const clone of clones) {
+        const Proxy = new ethers.ContractFactory(Auction.abi, Auction.bytecode, provider.getSigner())
+        let auctionClone = await Proxy.attach(clone)
+
+        let nftAddress = await auctionClone.nft()
+        let nftId = await auctionClone.nftId()
+        let highestBid = await auctionClone.highestBid()
+        let highestBidder = await auctionClone.highestBidder()
+        let seller = await auctionClone.seller()
+        let expireAt = await auctionClone.expireAt()
+        let tokenURI = await nftContract.tokenURI(nftId)
+        const meta = await axios.get(tokenURI)
+        let { creator, category } = data[index]
+
+        nfts.push({
+          creator,
+          category,
+          expirationDate: expireAt,
+          currentBid: ethers.utils.formatUnits(highestBid, 'ether'),
+          tokenId: nftId.toNumber(),
+          seller,
+          image: meta.data.image,
+          title: meta.data.title,
+          description: meta.data.description
+        })
+        console.log("sdf")
       }
-    }))
+    }
+
+    console.log(nfts)
     return nfts
   }
 

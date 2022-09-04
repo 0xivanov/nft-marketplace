@@ -7,9 +7,10 @@ import Loader from '../ui/Loader'
 import { ethers } from "ethers"
 import axios from 'axios'
 import NFT from '../../abis/NFT.json'
-import NFTMarket from '../../abis/NFTMarket.json'
+import Auction from '../../abis/Auction.json'
+import AuctionFactory from '../../abis/AuctionFactory.json'
 
-const Market = ({profile, isPending, provider, token }) => {
+const Market = ({ profile, isPending, provider, token }) => {
 
   const [nftData, setnftData] = useState(null)
   const [filteredData, setfilteredData] = useState(null)
@@ -27,20 +28,22 @@ const Market = ({profile, isPending, provider, token }) => {
 
   const loadContracts = async () => {
     const networkId = await provider.getNetwork()
-    const marketNetworkData = NFTMarket.networks[networkId.chainId]
+    console.log(networkId)
+    const auctionNetworkData = Auction.networks[networkId.chainId]
+    const auctionFactoryData = AuctionFactory.networks[networkId.chainId]
     const nftNetworkData = NFT.networks[networkId.chainId]
-    if (marketNetworkData && nftNetworkData) {
-      // Assign contract
+    if (auctionNetworkData && nftNetworkData && auctionFactoryData) {
       const signer = provider.getSigner()
-      return [new ethers.Contract(marketNetworkData.address, NFTMarket.abi, signer), new ethers.Contract(nftNetworkData.address, NFT.abi, signer)]
+      return [new ethers.Contract(auctionNetworkData.address, Auction.abi, signer),
+      new ethers.Contract(nftNetworkData.address, NFT.abi, signer),
+      new ethers.Contract(auctionFactoryData.address, AuctionFactory.abi, signer)]
     } else {
-      window.alert('NFTMarket contract not deployed to detected network.')
+      window.alert('contracts not deployed to detected network.')
     }
   }
 
   const getNfts = async () => {
-    const [marketContract, nftContract] = await loadContracts()
-    let nfts = await marketContract.fetchMarketItems()
+    const [auctionContract, nftContract, auctionFactoryContract] = await loadContracts()
 
     const response = await fetch('/market', {
       method: 'get',
@@ -48,27 +51,41 @@ const Market = ({profile, isPending, provider, token }) => {
     });
     let data = await response.json();
     let index = 0
-    nfts = await Promise.all(nfts.map(async (nft) => {
-      let tokenURI = await nftContract.tokenURI(nft.tokenId)
-      console.log(tokenURI)
-      const meta = await axios.get(tokenURI)
-      let price = ethers.utils.formatUnits(nft.price, 'ether')
-      let { creator, currentBid, category, expirationDate } = data[index]
-      index++
-      return {
-        creator,
-        category,
-        expirationDate,
-        currentBid,
-        tokenId: nft.tokenId.toNumber(),
-        price,
-        seller: nft.seller,
-        owner: nft.owner,
-        image: meta.data.image,
-        title: meta.data.title,
-        description: meta.data.description
+
+    let nfts = []
+    let addresses = await auctionFactoryContract.getSellerAddresses();
+    let uniqueAddresses = [...new Set(addresses)];
+    for (const address of uniqueAddresses) {
+      let clones = await auctionFactoryContract.getAuctions(address)
+      console.log(address, clones)
+      for (const clone of clones) {
+        const Proxy = new ethers.ContractFactory(Auction.abi, Auction.bytecode, provider.getSigner())
+        let auctionClone = await Proxy.attach(clone)
+
+        let nftAddress = await auctionClone.nft()
+        let nftId = await auctionClone.nftId()
+        let highestBid = await auctionClone.highestBid()
+        let highestBidder = await auctionClone.highestBidder()
+        let seller = await auctionClone.seller()
+        let expireAt = await auctionClone.expireAt()
+        let tokenURI = await nftContract.tokenURI(nftId)
+        const meta = await axios.get(tokenURI)
+        let { creator, category } = data[index]
+
+        nfts.push({
+          creator,
+          category,
+          expirationDate: expireAt,
+          currentBid: ethers.utils.formatUnits(highestBid, 'ether'),
+          tokenId: nftId.toNumber(),
+          seller,
+          image: meta.data.image,
+          title: meta.data.title,
+          description: meta.data.description
+        })
+        console.log("sdf")
       }
-    }))
+    }
 
     console.log(nfts)
     return nfts
@@ -86,6 +103,7 @@ const Market = ({profile, isPending, provider, token }) => {
     (async () => {
       if (provider) {
         const nfts = await getNfts()
+        console.log(nfts.at(0))
         setnftData(nfts)
         setfilteredData(nfts)
         setIsDataPending(false)
@@ -113,7 +131,7 @@ const Market = ({profile, isPending, provider, token }) => {
         </Container>
       </section>
     </>}
-    {nftData && <>
+    {filteredData && <>
       <CommonSection title={'MarketPlace'} />
       <section className='main__section'>
         <Container>
@@ -135,7 +153,7 @@ const Market = ({profile, isPending, provider, token }) => {
             </Col>
             {
               filteredData.map((nft) => (
-                nft && <Col key={nft.tokenId} lg='3' md='4' sm='6'><NftCard balance={balance} profile={profile} buyNft={buyNft} token={token} showLink={true} nft={nft} /></Col>
+                <Col key={nft.tokenId} lg='3' md='4' sm='6'><NftCard balance={balance} profile={profile} buyNft={buyNft} token={token} showLink={true} nft={nft} /></Col>
               ))
             }
           </Row>

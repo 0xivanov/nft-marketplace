@@ -9,7 +9,8 @@ import NftCard from '../ui/NftCard'
 import '../../style/create-nft.css'
 import '../ui/live-auction.css'
 import NFT from '../../abis/NFT.json'
-import NFTMarket from '../../abis/NFTMarket.json'
+import Auction from '../../abis/Auction.json'
+import AuctionFactory from '../../abis/AuctionFactory.json'
 
 const Create = ({ provider, profile, isPending }) => {
 
@@ -46,42 +47,54 @@ const Create = ({ provider, profile, isPending }) => {
 
   const loadContracts = async () => {
     const networkId = await provider.getNetwork()
-    const marketNetworkData = NFTMarket.networks[networkId.chainId]
+    console.log(networkId)
+    const auctionNetworkData = Auction.networks[networkId.chainId]
+    const auctionFactoryData = AuctionFactory.networks[networkId.chainId]
     const nftNetworkData = NFT.networks[networkId.chainId]
-    if (marketNetworkData && nftNetworkData) {
-      // Assign contract
+    if (auctionNetworkData && nftNetworkData && auctionFactoryData) {
       const signer = provider.getSigner()
-      return [new ethers.Contract(marketNetworkData.address, NFTMarket.abi, signer), new ethers.Contract(nftNetworkData.address, NFT.abi, signer)]
+      return [new ethers.Contract(auctionNetworkData.address, Auction.abi, signer), 
+          new ethers.Contract(nftNetworkData.address, NFT.abi, signer), 
+          new ethers.Contract(auctionFactoryData.address, AuctionFactory.abi, signer)]
     } else {
-      window.alert('NFTMarket contract not deployed to detected network.')
+      window.alert('contracts not deployed to detected network.')
     }
   }
 
   const createItem = async () => {
 
     const { title, description, currentBid, imgIpfsUrl } = nft
-    console.log(imgIpfsUrl)
     const data = JSON.stringify({
       title, description, image: imgIpfsUrl
     })
-    console.log(currentBid)
+    
     try {
       const result = await client.add(data)
       const url = `http://localhost:8080/ipfs/${result.cid.toV1().toString()}`
 
-      const [marketContract, nftContract] = await loadContracts()
+      const [auctionContract, nftContract, auctionFactoryContract] = await loadContracts()
 
-      let transaction = await nftContract.mint(url)
-      let tx = await transaction.wait()
+      const startingBid = ethers.utils.parseUnits(currentBid.toString(), 'ether')
 
+      //create clone auction address
+      let createAuctionClone = await auctionFactoryContract.createAuction(startingBid)
+      let tx = await createAuctionClone.wait()
+      let cloneAddress = tx.events[0].args.auction //get clone address
+
+      //mint nft
+      let mint = await nftContract.mint(url, cloneAddress)
+      tx = await mint.wait()
+      //extract event data
       let event = tx.events[0]
       let value = event.args[2]
       let tokenId = value.toNumber()
-      const price = ethers.utils.parseUnits(currentBid.toString(), 'ether')
-      let listingPrice = await marketContract.getListingPrice()
-      listingPrice = listingPrice.toString()
-      transaction = await marketContract.createMarketItem(nftContract.address, tokenId, price, { value: listingPrice })
-      await transaction.wait()
+
+      //create proxy from clone address
+      const Proxy = new ethers.ContractFactory(Auction.abi, Auction.bytecode, provider.getSigner())
+      let auctionClone = await Proxy.attach(cloneAddress)
+
+      let startAuction = await auctionClone.start(nftContract.address, tokenId)
+      tx = await startAuction.wait()
     } catch (e) {
       console.log(e)
     }
