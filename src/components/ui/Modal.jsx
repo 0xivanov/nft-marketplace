@@ -5,7 +5,7 @@ import './modal.css'
 
 const Modal = ({balance, profile, nft, buyNft, setShowModal }) => {
 
-  
+  const [bid, setBid] = useState(0)
 
   return (
     <div className="modal__wrapper">
@@ -18,7 +18,7 @@ const Modal = ({balance, profile, nft, buyNft, setShowModal }) => {
 
         <div className="input__item mb-3">
           <h6>Enter Quantity, {balance} available</h6>
-          <input type="number" placeholder='Enter quantity' />
+          <input type="number" placeholder='Enter quantity' onChange={input => setBid(input.target.value)} />
         </div>
 
         <div className='d-flex align-items-center justify-content-between gap-3'>
@@ -37,7 +37,7 @@ const Modal = ({balance, profile, nft, buyNft, setShowModal }) => {
         </div>
 
         <div>
-          <button onClick={() => { buyNft(nft) }} className="place__bid-btn">Place Bid</button>
+          <button onClick={() => { buyNft(nft, bid) }} className="place__bid-btn">Place Bid</button>
         </div>
       </div>
     </div>

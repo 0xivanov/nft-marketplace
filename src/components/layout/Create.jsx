@@ -20,18 +20,19 @@ const Create = ({ provider, profile, isPending }) => {
   const [nft, setNft] = useState({
     title: "Travel Monkey Club",
     desc: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam adipisci cupiditate officia, nostrum et deleniti vero corrupti facilis minima laborum nesciunt nulla error natus saepe illum quasi ratione suscipit tempore dolores. Recusandae, similique modi voluptates dolore repellat eum earum sint.",
-    creator: "",
+    sellerName: "",
+    auctionAddress: "",
     currentBid: 4.89,
     category: 'art',
     expirationDate: new Date(),
     imgIpfsUrl: null,
     img: null,
-    file: null
+    file: null,
   })
 
 
   useEffect(() => {
-    if (profile != null) nft.creator = profile.name
+    if (profile != null) nft.sellerName = profile.name
   }, [profile])
 
   const onImageChange = async (event) => {
@@ -95,21 +96,19 @@ const Create = ({ provider, profile, isPending }) => {
 
       let startAuction = await auctionClone.start(nftContract.address, tokenId)
       tx = await startAuction.wait()
-    } catch (e) {
-      console.log(e)
-    }
 
-    try {
+      //post data to db
+      nft.auctionAddress = cloneAddress
       const response = await fetch('/create', {
         method: 'post',
         body: JSON.stringify(nft),
         headers: { 'Content-Type': 'application/json' }
       });
-      const data = await response.json()
-      console.log(data);
+      const dbData = await response.json()
+      console.log(dbData);
       navigate('/market')
-    } catch (error) {
-      console.log(error)
+    } catch (e) {
+      console.log(e)
     }
   }
 
@@ -170,7 +169,7 @@ const Create = ({ provider, profile, isPending }) => {
                   <div className="form__input w-50 d-flex align-nfts-center justify-content-between">
                     <div className="bid__btn">
                       <button type='button' className="btn d-flex align-nfts-center gap-2" onClick={async () => {
-                        nft.creator = profile.name
+                        nft.sellerName = profile.name
                         try {
                           const result = await client.add(nft.file)
                           nft.imgIpfsUrl = `http://localhost:8080/ipfs/${result.cid.toV1().toString()}`

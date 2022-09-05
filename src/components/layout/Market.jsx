@@ -66,19 +66,21 @@ const Market = ({ profile, isPending, provider, token }) => {
         let nftId = await auctionClone.nftId()
         let highestBid = await auctionClone.highestBid()
         let highestBidder = await auctionClone.highestBidder()
-        let seller = await auctionClone.seller()
+        let sellerAddress = await auctionClone.seller()
         let expireAt = await auctionClone.expireAt()
         let tokenURI = await nftContract.tokenURI(nftId)
         const meta = await axios.get(tokenURI)
-        let { creator, category } = data[index]
+        let { sellerName, category, auctionAddress } = data[index]
 
         nfts.push({
-          creator,
+          sellerName,
+          auctionAddress,
+          highestBidder,
           category,
           expirationDate: expireAt,
           currentBid: ethers.utils.formatUnits(highestBid, 'ether'),
           tokenId: nftId.toNumber(),
-          seller,
+          sellerAddress,
           image: meta.data.image,
           title: meta.data.title,
           description: meta.data.description
@@ -91,19 +93,24 @@ const Market = ({ profile, isPending, provider, token }) => {
     return nfts
   }
 
-  const buyNft = async (nft) => {
-    const [marketContract, nftContract] = await loadContracts()
-    let price = ethers.utils.parseUnits(nft.price, 'ether')
-    const transaction = await marketContract.createMarketSale(nftContract.address, nft.tokenId, { value: price })
-    await transaction.wait()
-    getNfts()
+  const buyNft = async (nft, bid) => {
+
+    const Proxy = new ethers.ContractFactory(Auction.abi, Auction.bytecode, provider.getSigner())
+    let auctionClone = await Proxy.attach(nft.auctionAddress)
+    const options = {value: ethers.utils.parseEther(bid)}
+    try {
+      const tx = await auctionClone.bid(options)
+      await tx.wait()
+      window.location.reload()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(() => {
     (async () => {
       if (provider) {
         const nfts = await getNfts()
-        console.log(nfts.at(0))
         setnftData(nfts)
         setfilteredData(nfts)
         setIsDataPending(false)

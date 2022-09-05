@@ -81,10 +81,10 @@ const NftDetails = ({provider, token}) => {
         let expireAt = await auctionClone.expireAt()
         let tokenURI = await nftContract.tokenURI(nftId)
         const meta = await axios.get(tokenURI)
-        let { creator, category } = data[index]
+        let { sellerName, category } = data[index]
 
         nfts.push({
-          creator,
+          sellerName,
           category,
           expirationDate: expireAt,
           currentBid: ethers.utils.formatUnits(highestBid, 'ether'),

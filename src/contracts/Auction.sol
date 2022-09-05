@@ -13,16 +13,6 @@ contract Auction {
   event Bid(address indexed sender, uint amount);
   event Withdraw(address indexed bidder, uint amount);
 
-  struct MarketItem {
-      uint256 itemId;
-      address nftContract;
-      uint256 tokenId;
-      address payable seller;
-      address payable owner;
-      uint256 price;
-      bool sold;
-  }
-
   IERC721 public nft;
   uint public nftId;
   address payable public seller;

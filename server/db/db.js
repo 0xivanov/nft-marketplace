@@ -64,17 +64,14 @@ const Profile = mongoose.model('Profile', {
 })
 
 const NFT = mongoose.model('NFT', {
-  creator: {
+  sellerName: {
     type: String
   },
-  currentBid: {
-    type: Number
+  auctionAddress: {
+    type: String
   },
   category: {
     type: String
-  },
-  expirationDate: {
-    type: Date
   },
   likes: {
     type: Number,
@@ -129,6 +126,7 @@ const getProfile = async (token) => {
 const editProfile = async (profile, _id) => {
   return Profile.findByIdAndUpdate({_id}, profile, {new: true}).then((profile) => {
     console.log("profile updated")
+    NFT.findById
     return profile
   }).catch(e => console.log(e))
 }

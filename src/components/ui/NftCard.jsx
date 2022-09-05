@@ -5,14 +5,14 @@ import Modal from './Modal'
 
 const NftCard = (props) => {
 
-  const { tokenId, title, currentBid, expirationDate, image, imgUrl, creator } = props.nft
+  const { tokenId, title, currentBid, expirationDate, image, imgUrl, sellerName } = props.nft
   const [showModal, setShowModal] = useState(false)
   const [_img, _setImg] = useState()
   const [isPending, setIsPending] = useState(false)
   const navigate = useNavigate()
 
   const timeLeft = (strDate) => {
-    const dt = new Date(strDate);
+    const dt = new Date(strDate * 1000);
     const now = new Date()
     return Math.round((dt - now) / 36e5);
   }
@@ -33,7 +33,7 @@ const NftCard = (props) => {
           <div className="creator__info w-100 d-flex align-items-center justify-content-between">
             <div>
               <h6>Created By</h6>
-              <p>{creator}</p>
+              <p>{sellerName}</p>
             </div>
             <div>
               <h6>Expiration time</h6>
