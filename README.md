@@ -1,8 +1,8 @@
 # NFT marketplace
 
-An NFT marketplace is a blockchain-based online platform to sell and buy non-fungible tokens.
-Version-1 branch contains base functionality for transactions at a fixed price.
-Master branch expands version-1 with bidding system and factory/clone pattern in the smart contracts.
+•	“English” auction web app. The basic functionality is that users can mint erc721 tokens and start auction for the item. After the expiration date the seller ends the auction. The user with highest bid gets transferred the token, seller gets the currency from the smart contract and the contract owner (in this case me) gets some fee for the platform. The outbid users can withdraw their currency off the contract.<br>
+•	Technologies: Solidity, Node.js, React.js, Ethers.js, Truffle, IPFS, MongoDb, ChainLink. The nft’s meta-data is uploaded to IPFS through my local node. Authentication is achieved with web3 wallet. Off-chain data is stored in MongoDb database and served by Express server in Nodejs. Using ChainLink to show real-time value of the items in USD/EURO. Used factory/clone pattern to create multiple proxy contracts and make delegate calls to the implementation in order to save gas.
+
 
 <hr>
 
